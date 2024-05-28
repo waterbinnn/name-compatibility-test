@@ -1,0 +1,58 @@
+.title {
+  font-size: $h1;
+  color: $white;
+}
+
+.inputs {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  gap: 2px;
+  margin: 0 -14px;
+  margin-top: 39px;
+}
+
+.desc {
+  font-size: 13px;
+  color: $gray-100;
+  display: block;
+  margin-top: 8px;
+  margin-left: -10px;
+}
+
+.btn-wrap {
+  width: 100%;
+  margin-top: 61px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  .btn {
+    cursor: pointer;
+    transition: all 0.1s ease-in;
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+}
+
+.click-text {
+  position: absolute;
+  top: 7%;
+  right: 20%;
+  font-size: $subtitle;
+  animation: opacity 0.5s ease-in infinite alternate;
+}
+
+@-webkit-keyframes opacity {
+  0% {
+    color: $blue;
+  }
+  50% {
+    color: $green;
+  }
+  100% {
+    color: $pink;
+  }
+}
