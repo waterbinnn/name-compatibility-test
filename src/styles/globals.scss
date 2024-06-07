@@ -17,8 +17,12 @@ body {
 
 .container {
   width: 100%;
-  height: 100%;
-  max-width: 480px;
+  height: 100dvh;
+  max-width: 768px;
   margin: 0 auto;
+  position: relative;
+}
+
+.padding {
   padding: 35px 16px 0;
 }

@@ -4,41 +4,56 @@ import { useStyle } from '@/hooks';
 import styles from './Main.module.scss';
 import { NameInput } from '@/components';
 import Image from 'next/image';
-import Link from 'next/link';
+
 import { useState } from 'react';
+
+import Arrow from '/public/assets/arrow_back.svg';
+import Link from 'next/link';
 
 export const Main = () => {
   const { styled: cx } = useStyle(styles);
   const [isFilled, setIsFilled] = useState<boolean>(true);
+
   return (
-    <div className={cx('container')}>
-      <h1 className={cx('title')}>우리의</h1>
-      <h1 className={cx('title')}>이름 궁합은?</h1>
-      <div className={cx('inputs')}>
-        <NameInput />
-        <NameInput />
-        <NameInput />
-        <NameInput color='green' editable={false} value={'권'} />
-        <NameInput color='green' editable={false} value={'강'} />
-        <NameInput color='green' editable={false} value={'한'} />
+    <div className={cx('container', 'main')}>
+      <div>
+        <div className={cx('padding')}>
+          <h1 className={cx('title')}>우리의</h1>
+          <h1 className={cx('title')}>이름 궁합은?</h1>
+        </div>
+        <div>
+          <div className={cx('inputs')}>
+            <NameInput />
+            <NameInput />
+            <NameInput />
+            <NameInput color='green' value={''} />
+            <NameInput color='green' value={''} />
+            <NameInput color='green' value={''} />
+          </div>
+          <span className={cx('desc')}>
+            이름을 입력해 주세요. (세자리의 한글 이름만 가능합니다.)
+          </span>
+        </div>
       </div>
-      <span className={cx('desc')}>
-        이름을 입력해 주세요. (세자리의 한글 이름만 가능합니다.)
-      </span>
       <Link
-        className={cx('btn-wrap')}
+        href={'/result'}
         aria-disabled={!isFilled}
-        href={isFilled ? '/result' : '/'}
+        tabIndex={!isFilled ? -1 : undefined}
+        className={cx('arrow-wrap', { disabled: !isFilled })}
       >
-        <Image
-          alt='button'
-          width={260}
-          height={260}
-          src={'/assets/button.png'}
-          className={cx('btn')}
-        />
-        <strong className={cx('click-text')}>CLICK!</strong>
+        <Arrow className={cx('arrow')} />
       </Link>
+      <div className={cx('image-wrap')}>
+        <Image
+          aria-hidden
+          alt='image'
+          width={0}
+          height={0}
+          sizes='100vw'
+          src={'/assets/tto.png'}
+          className={cx('char')}
+        />
+      </div>
     </div>
   );
 };
