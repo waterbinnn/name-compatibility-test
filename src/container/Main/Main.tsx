@@ -5,14 +5,27 @@ import styles from './Main.module.scss';
 import { NameInput } from '@/components';
 import Image from 'next/image';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import Arrow from '/public/assets/arrow_back.svg';
 import Link from 'next/link';
 
 export const Main = () => {
   const { styled: cx } = useStyle(styles);
-  const [isFilled, setIsFilled] = useState<boolean>(true);
+  const [isFilled, setIsFilled] = useState<boolean>(false);
+
+  const [name1, setName1] = useState<string>('');
+  const [name2, setName2] = useState<string>('');
+
+  useEffect(() => {
+    if (name1.length + name2.length >= 6) {
+      setIsFilled(true);
+    }
+
+    return () => {
+      setIsFilled(false);
+    };
+  }, [name1.length, name2.length]);
 
   return (
     <div className={cx('container', 'main')}>
@@ -23,13 +36,19 @@ export const Main = () => {
         </div>
         <div>
           <div className={cx('inputs')}>
-            <NameInput />
-            <NameInput />
-            <NameInput />
-            <NameInput color='green' value={''} />
-            <NameInput color='green' value={''} />
-            <NameInput color='green' value={''} />
+            <NameInput
+              maxLength={3}
+              value={name1}
+              onChange={(e) => setName1(e.target.value)}
+            />
+            <NameInput
+              value={name2}
+              onChange={(e) => setName2(e.target.value)}
+              maxLength={3}
+              color='green'
+            />
           </div>
+
           <span className={cx('desc')}>
             이름을 입력해 주세요. (세자리의 한글 이름만 가능합니다.)
           </span>
