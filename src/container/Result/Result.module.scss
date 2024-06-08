@@ -49,6 +49,7 @@
     margin-top: 8px;
     font-size: 38px;
     color: #aafb27;
+    animation: color 1s ease-in infinite alternate;
   }
 }
 
@@ -95,4 +96,40 @@
 
 .hidden {
   display: none;
+}
+
+@keyframes color {
+  0% {
+    color: #27fbf7;
+  }
+  10% {
+    color: #27c9fb;
+  }
+  20% {
+    color: #aafb27;
+  }
+  30% {
+    color: #e2ff3c;
+  }
+  40% {
+    color: #ff87b7;
+  }
+  50% {
+    color: #ef1489;
+  }
+  60% {
+    color: #27fbf7;
+  }
+  70% {
+    color: #27c9fb;
+  }
+  80% {
+    color: #aafb27;
+  }
+  90% {
+    color: #e2ff3c;
+  }
+  100% {
+    color: #ff87b7;
+  }
 }
