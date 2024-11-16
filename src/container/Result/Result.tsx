@@ -258,7 +258,7 @@ export const Result = () => {
       {/* 로딩중 */}
       {isLoading && (
         <div className={cx('gif-wrap')}>
-          <strong className={cx('loading-text')}>궁합 계산 중 .. ... </strong>
+          <strong className={cx('loading-text')}>궁합 계산 중 ..... </strong>
           <Image
             alt='loading'
             src='/assets/loading-cats.gif'

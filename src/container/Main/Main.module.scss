@@ -21,7 +21,6 @@
 
 .desc {
   font-size: 12px;
-  font-weight: 400;
   color: $gray-200;
   display: block;
   margin-top: 6px;
@@ -47,10 +46,12 @@
 }
 
 .copyright {
+  display: inline-block;
   font-size: 10px;
   position: absolute;
   bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  text-align: center;
   color: $gray-200;
 }

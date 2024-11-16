@@ -21,6 +21,7 @@
 }
 
 %text-animation {
+  color: $green;
   animation: color 1s ease-in infinite alternate;
 }
 
@@ -64,7 +65,7 @@
     @extend %text-animation;
     font-size: $h2;
     letter-spacing: 0.04em;
-    color: $green;
+    font-weight: $font-bold;
   }
 }
 
@@ -125,7 +126,6 @@
   &.result {
     .count {
       @extend %text-animation;
-      color: $green;
     }
   }
 }
@@ -181,7 +181,7 @@
     color: $skyblue;
   }
   20% {
-    color: $skyblue;
+    color: $green;
   }
   30% {
     color: $yellow;
