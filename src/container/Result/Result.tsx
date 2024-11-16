@@ -14,6 +14,7 @@ import { useShallow } from 'zustand/shallow';
 export const Result = () => {
   const router = useRouter();
   const { styled: cx } = useStyle(styles);
+
   const { name1, name2, setName1, setName2 } = useNameStore(
     useShallow((state) => ({
       name1: state.name1,
@@ -26,6 +27,17 @@ export const Result = () => {
   const [nameBox, setNameBox] = useState<string[]>([]);
   const [countedLines, setCountedLines] = useState<number[][]>([[]]);
   const [isError, setIsError] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2500);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
 
   const handleGoToMain = useCallback(() => {
     router.push('/');
@@ -111,35 +123,10 @@ export const Result = () => {
   }, [nameBox]);
 
   return (
-    <div className={cx('container')}>
-      {isError && (
-        <div className={cx('error-wrap')}>
-          <h1 className={cx('header-text')}>
-            이름을
-            <br />
-            불러오지
-            <br />
-            못했어요
-            <br />
-            메인 페이지로
-            <br />
-            이동해서
-            <br />
-            다시 시도해주세요~!
-          </h1>
-          <Button
-            size='lg'
-            fullWidth
-            onClick={handleGoToMain}
-            className={cx('button')}
-          >
-            메인 페이지로 이동하기
-          </Button>
-        </div>
-      )}
-
-      {!isError && countedLines[0].length > 0 && (
-        <>
+    <>
+      {/* 정상 작동  */}
+      {!isLoading && !isError && countedLines[0].length > 0 && (
+        <div className={cx('container')}>
           <h1 className={cx('hidden')}>이름 궁합 결과</h1>
           <header className={cx('header')}>
             <h2 className={cx('header-text-wrap')}>
@@ -201,8 +188,51 @@ export const Result = () => {
               다시하기
             </Button>
           </div>
-        </>
+        </div>
       )}
-    </div>
+
+      {/* 로딩중 */}
+      {isLoading && (
+        <div className={cx('gif-wrap')}>
+          <strong className={cx('loading-text')}>궁합 계산 중 .. ... </strong>
+          <Image
+            alt='loading'
+            src='/assets/loading-cats.gif'
+            aria-label='loading'
+            className={cx('loading-gif')}
+            width={335}
+            height={350}
+            layout='responsive'
+          />
+        </div>
+      )}
+
+      {/* 에러 발생 */}
+      {isError && (
+        <div className={cx('container', 'error-wrap')}>
+          <h1 className={cx('header-text')}>
+            이름을
+            <br />
+            불러오지
+            <br />
+            못했어요
+            <br />
+            메인 페이지로
+            <br />
+            이동해서
+            <br />
+            다시 시도해주세요~!
+          </h1>
+          <Button
+            size='lg'
+            fullWidth
+            onClick={handleGoToMain}
+            className={cx('button')}
+          >
+            메인 페이지로 이동하기
+          </Button>
+        </div>
+      )}
+    </>
   );
 };
