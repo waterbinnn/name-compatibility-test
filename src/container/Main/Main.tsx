@@ -62,6 +62,9 @@ export const Main = () => {
         height={245}
         alt='cats'
         aria-hidden
+        placeholder='blur'
+        blurDataURL='/assets/chat_cat.png'
+        priority
       />
 
       <div className={cx('input-name-wrap')}>

@@ -147,6 +147,8 @@ export const Result = () => {
               height={172}
               alt='cats'
               aria-hidden
+              placeholder='blur'
+              blurDataURL='/assets/cat.png'
             />
           </header>
 
@@ -203,6 +205,9 @@ export const Result = () => {
             width={335}
             height={350}
             layout='responsive'
+            placeholder='blur'
+            blurDataURL='/assets/loading-cats.png'
+            priority
           />
         </div>
       )}
