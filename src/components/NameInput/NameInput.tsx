@@ -2,23 +2,25 @@ import { useStyle } from '@/hooks';
 
 import styles from './NameInput.module.scss';
 import { InputHTMLAttributes, forwardRef } from 'react';
+
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
-  color?: 'blue' | 'green';
-  editable?: boolean;
-  isSquare?: boolean;
+  placeholder: string;
+  value: string;
 }
 
 export const NameInput = forwardRef<HTMLInputElement, Props>(
-  ({ color = 'blue', editable = true, isSquare = false, ...rest }, ref) => {
+  ({ placeholder, value, ...rest }, ref) => {
     const { styled: cx } = useStyle(styles);
-    const classes = cx('input', color, { 'aspect-square': isSquare });
+    const classes = cx('input');
 
     return (
       <input
+        placeholder={placeholder}
         className={classes}
-        readOnly={!editable}
         ref={ref}
+        minLength={3}
         maxLength={3}
+        value={value}
         {...rest}
       />
     );

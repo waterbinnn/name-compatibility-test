@@ -1,6 +1,6 @@
 .input {
   font-size: $subtitle;
-  color: $dark-black;
+  color: $black;
   padding: 10px 13px;
   font-weight: 600;
   width: 100%;
@@ -8,15 +8,11 @@
   min-width: 32px;
   border: none;
   outline: none;
-  text-align: center;
-  background-color: $blue;
+  background-color: $white;
   border-radius: 0;
+  z-index: 100;
 
-  &.green {
-    background-color: $green;
-  }
-
-  &.aspect-square {
-    aspect-ratio: auto 1 / 1;
+  &::placeholder {
+    color: $gray-200;
   }
 }
