@@ -204,7 +204,7 @@ export const Result = () => {
               </div>
               <p className={cx('header-text-sm')}>우리의 이름 궁합은</p>
               <strong className={cx('header-text-point')}>
-                {countedLines[4] && countedLines[4].join('')} %
+                {countedLines[4] && countedLines[4].join('')}%
               </strong>
             </h2>
           </header>
