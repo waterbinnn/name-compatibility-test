@@ -150,7 +150,7 @@ export const Result = () => {
 
           boxText.forEach((element) => {
             if (element instanceof HTMLElement) {
-              element.style.lineHeight = '0.5';
+              element.style.lineHeight = '0.44';
             }
           });
 
@@ -159,15 +159,25 @@ export const Result = () => {
           });
         },
       });
-      canvas.toBlob((blob) => {
-        if (blob !== null) {
-          saveAs(blob, '이름궁합.png');
-        }
-      });
+
+      const fileName = `${name1}♥︎${name2}=${countedLines[4] && countedLines[4].join('')}.png`;
+
+      if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = fileName;
+        link.click();
+      } else {
+        canvas.toBlob((blob) => {
+          if (blob !== null) {
+            saveAs(blob, fileName);
+          }
+        });
+      }
     } catch (error) {
       console.error('이미지 저장 실패요 ,, ', error);
     }
-  }, []);
+  }, [countedLines, name1, name2]);
 
   return (
     <>
