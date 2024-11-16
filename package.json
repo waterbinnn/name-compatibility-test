@@ -12,6 +12,8 @@
     "@svgr/webpack": "^8.1.0",
     "@waterbin/ui-kit": "^0.0.4",
     "classnames": "^2.5.1",
+    "file-saver": "^2.0.5",
+    "html2canvas": "^1.4.1",
     "next": "14.2.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -20,6 +22,7 @@
     "zustand": "^5.0.1"
   },
   "devDependencies": {
+    "@types/file-saver": "^2.0.7",
     "@types/node": "^20",
     "@types/react": "^18.3.9",
     "@types/react-dom": "^18",
