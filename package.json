@@ -10,17 +10,18 @@
   },
   "dependencies": {
     "@svgr/webpack": "^8.1.0",
+    "@waterbin/ui-kit": "^0.0.4",
     "classnames": "^2.5.1",
     "next": "14.2.3",
-    "react": "^18",
-    "react-dom": "^18",
-    "react-lottie-player": "^2.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "sass": "^1.77.2",
-    "ts-loader": "^9.5.1"
+    "ts-loader": "^9.5.1",
+    "zustand": "^5.0.1"
   },
   "devDependencies": {
     "@types/node": "^20",
-    "@types/react": "^18",
+    "@types/react": "^18.3.9",
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
