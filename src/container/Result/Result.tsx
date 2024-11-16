@@ -5,11 +5,13 @@ import styles from './Result.module.scss';
 
 import { Button } from '@waterbin/ui-kit';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
+import saveAs from 'file-saver';
 import { useNameStore } from '@/store';
 import { coda, consonant, strokeCount, vowel } from '@/constant';
 import { useShallow } from 'zustand/shallow';
+import html2canvas from 'html2canvas';
 
 export const Result = () => {
   const router = useRouter();
@@ -23,6 +25,8 @@ export const Result = () => {
       setName2: state.setName2,
     }))
   );
+
+  const resultRef = useRef<HTMLDivElement>(null);
 
   const [nameBox, setNameBox] = useState<string[]>([]);
   const [countedLines, setCountedLines] = useState<number[][]>([[]]);
@@ -122,14 +126,67 @@ export const Result = () => {
     setCountedLines(allResults); // 모든 결과를 상태에 저장
   }, [nameBox]);
 
+  const handleDownload = useCallback(async () => {
+    if (!resultRef.current) return;
+
+    try {
+      const contentImage = resultRef.current;
+      const canvas = await html2canvas(contentImage, {
+        useCORS: true, // 외부 이미지 허용
+        scale: 2,
+        ignoreElements: (element) => {
+          return element.id === 'ignore-download';
+        },
+
+        onclone: (el) => {
+          const countText = el.querySelectorAll('li');
+          const h2Element = el.querySelector('#header');
+          const boxText = el.querySelectorAll('#box');
+
+          if (h2Element instanceof HTMLElement) {
+            h2Element.style.paddingBottom = '20px';
+            h2Element.style.marginTop = '-20px';
+          }
+
+          boxText.forEach((element) => {
+            if (element instanceof HTMLElement) {
+              element.style.lineHeight = '0.5';
+            }
+          });
+
+          countText.forEach((element) => {
+            element.style.lineHeight = '0.5px';
+          });
+        },
+      });
+      canvas.toBlob((blob) => {
+        if (blob !== null) {
+          saveAs(blob, '이름궁합.png');
+        }
+      });
+    } catch (error) {
+      console.error('이미지 저장 실패요 ,, ', error);
+    }
+  }, []);
+
   return (
     <>
       {/* 정상 작동  */}
       {!isLoading && !isError && countedLines[0].length > 0 && (
-        <div className={cx('container')}>
+        <div className={cx('container')} ref={resultRef}>
           <h1 className={cx('hidden')}>이름 궁합 결과</h1>
+
           <header className={cx('header')}>
-            <h2 className={cx('header-text-wrap')}>
+            <Image
+              className={cx('image-cats')}
+              src={'/assets/cat.png'}
+              width={204}
+              height={172}
+              alt='cats'
+              aria-hidden
+              unoptimized
+            />
+            <h2 className={cx('header-text-wrap')} id='header'>
               <div className={cx('header-name-wrap')}>
                 <strong className={cx('header-text')}>{name1}</strong>
                 <span className={cx('header-text')}>🩵</span>
@@ -140,22 +197,12 @@ export const Result = () => {
                 {countedLines[4] && countedLines[4].join('')} %
               </strong>
             </h2>
-            <Image
-              className={cx('image-cats')}
-              src={'/assets/cat.png'}
-              width={204}
-              height={172}
-              alt='cats'
-              aria-hidden
-              placeholder='blur'
-              blurDataURL='/assets/cat.png'
-            />
           </header>
 
           <main className={cx('main-wrap')}>
             <div className={cx('name-box-wrap')}>
               {nameBox.map((name, index) => (
-                <div className={cx('name-box')} key={index}>
+                <div className={cx('name-box')} key={index} id='box'>
                   {name}
                 </div>
               ))}
@@ -177,8 +224,13 @@ export const Result = () => {
             </div>
           </main>
 
-          <div className={cx('button-wrap')}>
-            <Button size='lg' fullWidth className={cx('button')}>
+          <div className={cx('button-wrap')} id='ignore-download'>
+            <Button
+              size='lg'
+              fullWidth
+              className={cx('button')}
+              onClick={handleDownload}
+            >
               저장하기
             </Button>
             <Button
@@ -208,6 +260,7 @@ export const Result = () => {
             placeholder='blur'
             blurDataURL='/assets/loading-cats.png'
             priority
+            unoptimized
           />
         </div>
       )}
