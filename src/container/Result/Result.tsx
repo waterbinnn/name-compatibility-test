@@ -2,86 +2,207 @@
 
 import { useStyle } from '@/hooks';
 import styles from './Result.module.scss';
-import { NameInput } from '@/components';
-import Image from 'next/image';
 
-import Arrow from '/public/assets/arrow_back.svg';
+import { Button } from '@waterbin/ui-kit';
 import { useRouter } from 'next/navigation';
-import { Modal } from '@/components/Modal';
+import { useCallback, useEffect, useState } from 'react';
+import Image from 'next/image';
+import { useNameStore } from '@/store';
+import { coda, consonant, strokeCount, vowel } from '@/constant';
+import { useShallow } from 'zustand/shallow';
 
 export const Result = () => {
-  const { styled: cx } = useStyle(styles);
   const router = useRouter();
+  const { styled: cx } = useStyle(styles);
+  const { name1, name2, setName1, setName2 } = useNameStore(
+    useShallow((state) => ({
+      name1: state.name1,
+      name2: state.name2,
+      setName1: state.setName1,
+      setName2: state.setName2,
+    }))
+  );
+
+  const [nameBox, setNameBox] = useState<string[]>([]);
+  const [countedLines, setCountedLines] = useState<number[][]>([[]]);
+  const [isError, setIsError] = useState<boolean>(false);
+
+  const handleGoToMain = useCallback(() => {
+    router.push('/');
+    setName1('');
+    setName2('');
+  }, [router, setName1, setName2]);
+
+  useEffect(() => {
+    function mixStrings(name1: string, name2: string) {
+      let mixedArr = [];
+      const nameArr = name1.split('');
+      const name2Arr = name2.split('');
+
+      for (let i = 0; i < 3; i++) {
+        mixedArr.push(nameArr[i], name2Arr[i]);
+      }
+      return mixedArr;
+    }
+
+    if (name1 && name2) {
+      setNameBox(mixStrings(name1, name2));
+    }
+  }, [name1, name2]);
+
+  //하나의 글자 획수 계산 함수
+  function splitHangulAndCount(name: string) {
+    const char = name.trim();
+    const charCode = char.charCodeAt(0);
+
+    if (charCode >= 0xac00 && charCode <= 0xd7a3) {
+      // 한글 유니코드 계산
+      const baseCode = charCode - 0xac00;
+
+      const con = Math.floor(baseCode / (21 * 28)); //초성
+      const vow = Math.floor((baseCode % (21 * 28)) / 28); //중성
+      const cod = baseCode % 28; //종성
+
+      //초성, 중성, 종성 분리
+      const hangulArr = [consonant[con], vowel[vow], coda[cod]];
+
+      //각 획수를 계산하여 더한값 return
+      const countHangul: number[] = [];
+
+      //글자와 글자수배열 매칭
+      hangulArr.forEach((hangul) => {
+        const matchedHangul = strokeCount.find(
+          (value) => value.text === hangul
+        );
+        if (matchedHangul && matchedHangul.value !== undefined) {
+          countHangul.push(+matchedHangul.value);
+        }
+      });
+
+      //총 stroke 계산
+      const count = countHangul.reduce((a, c) => a + c, 0);
+      return count;
+    } else {
+      setIsError(true);
+      return 0;
+    }
+  }
+
+  useEffect(() => {
+    //두 숫자를 더하고 일의 자리만 반환
+    const sumNames = (a: number, b: number) => (a + b) % 10;
+
+    if (!nameBox || nameBox.length === 0) return;
+
+    const firstArray = nameBox.map((name) => splitHangulAndCount(name)); // 첫 번째 배열
+    const allResults = [firstArray]; // 중간 배열 결과를 저장할 배열
+
+    let currentArray = firstArray;
+
+    while (currentArray.length > 2) {
+      const newArray = [];
+      for (let i = 0; i < currentArray.length - 1; i++) {
+        newArray.push(sumNames(currentArray[i], currentArray[i + 1]));
+      }
+      allResults.push(newArray); // 새로운 배열 추가
+      currentArray = newArray; // 현재 배열 갱신
+    }
+    setCountedLines(allResults); // 모든 결과를 상태에 저장
+  }, [nameBox]);
 
   return (
-    <Modal>
-      <div>
-        <div className={cx('arrow')} onClick={() => router.push('/')}>
-          <Arrow />
+    <div className={cx('container')}>
+      {isError && (
+        <div className={cx('error-wrap')}>
+          <h1 className={cx('header-text')}>
+            이름을
+            <br />
+            불러오지
+            <br />
+            못했어요
+            <br />
+            메인 페이지로
+            <br />
+            이동해서
+            <br />
+            다시 시도해주세요~!
+          </h1>
+          <Button
+            size='lg'
+            fullWidth
+            onClick={handleGoToMain}
+            className={cx('button')}
+          >
+            메인 페이지로 이동하기
+          </Button>
         </div>
-        <article className={cx('result-wrap')}>
-          <h2 className={cx('hidden')}>결과</h2>
-          <div className={cx('image-wrap')}>
-            <Image
-              aria-hidden
-              alt='image'
-              width={0}
-              height={0}
-              sizes='100vw'
-              src={'/assets/result-char.png'}
-              className={cx('char')}
-            />
-          </div>
+      )}
 
-          <div className={cx('background')}>
-            <div className={cx('result-text')}>
-              <p>우리의 이름 궁합은</p>
-              <p className={cx('point')}>49점</p>
-            </div>
-            <div className={cx('names')}>
-              <NameInput isSquare editable={false} />
-              <NameInput color='green' isSquare editable={false} />
-              <NameInput isSquare editable={false} />
-              <NameInput color='green' isSquare editable={false} />
-              <NameInput isSquare editable={false} />
-              <NameInput color='green' isSquare editable={false} />
+      {!isError && countedLines[0].length > 0 && (
+        <>
+          <h1 className={cx('hidden')}>이름 궁합 결과</h1>
+          <header className={cx('header')}>
+            <h2 className={cx('header-text-wrap')}>
+              <div className={cx('header-name-wrap')}>
+                <strong className={cx('header-text')}>{name1}</strong>
+                <span className={cx('header-text')}>🩵</span>
+                <strong className={cx('header-text')}>{name2}</strong>
+              </div>
+              <p className={cx('header-text-sm')}>우리의 이름 궁합은</p>
+              <strong className={cx('header-text-point')}>
+                {countedLines[4] && countedLines[4].join('')} %
+              </strong>
+            </h2>
+            <Image
+              className={cx('image-cats')}
+              src={'/assets/cat.png'}
+              width={204}
+              height={172}
+              alt='cats'
+              aria-hidden
+            />
+          </header>
+
+          <main className={cx('main-wrap')}>
+            <div className={cx('name-box-wrap')}>
+              {nameBox.map((name, index) => (
+                <div className={cx('name-box')} key={index}>
+                  {name}
+                </div>
+              ))}
             </div>
 
             <div className={cx('list-wrap')}>
-              <ol className={cx('list', '1')}>
-                <li>1</li>
-                <li>2</li>
-                <li>3</li>
-                <li>4</li>
-                <li>5</li>
-                <li>6</li>
-              </ol>
-              <ol className={cx('list', '2')}>
-                <li>7</li>
-                <li>8</li>
-                <li>9</li>
-                <li>0</li>
-                <li>2</li>
-              </ol>
-              <ol className={cx('list', '3')}>
-                <li>2</li>
-                <li>2</li>
-                <li>2</li>
-                <li>2</li>
-              </ol>
-              <ol className={cx('list', '4')}>
-                <li>2</li>
-                <li>2</li>
-                <li>2</li>
-              </ol>
-              <ol className={cx('list', 'result')}>
-                <li className={cx('result')}>4</li>
-                <li className={cx('result')}>9</li>
-              </ol>
+              {countedLines.map((number, index) => (
+                <ol
+                  className={cx('list', { result: index === 4 })}
+                  key={`line-${index}`}
+                >
+                  {number.map((count, idx) => (
+                    <li key={`count-${idx}`} className={cx('count')}>
+                      {count}
+                    </li>
+                  ))}
+                </ol>
+              ))}
             </div>
+          </main>
+
+          <div className={cx('button-wrap')}>
+            <Button size='lg' fullWidth className={cx('button')}>
+              저장하기
+            </Button>
+            <Button
+              size='lg'
+              fullWidth
+              className={cx('button', 'restart')}
+              onClick={handleGoToMain}
+            >
+              다시하기
+            </Button>
           </div>
-        </article>
-      </div>
-    </Modal>
+        </>
+      )}
+    </div>
   );
 };

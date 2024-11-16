@@ -1,68 +1,58 @@
 .main {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  padding-top: 40px;
+  max-width: 470px;
 }
 
 .title {
   font-size: $h1;
+  line-height: 1.1;
+  font-weight: $font-bold;
   color: $white;
   user-select: none;
 }
 
-.inputs {
+.input-name-wrap {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  gap: 2px;
-  margin-top: 39px;
+  gap: 8px;
+  margin-top: -20px;
 }
 
 .desc {
-  font-size: 13px;
-  color: $gray-100;
+  font-size: 12px;
+  font-weight: 400;
+  color: $gray-200;
   display: block;
-  margin-top: 8px;
-  padding-left: 10px;
+  margin-top: 6px;
   margin-bottom: 30px;
   user-select: none;
 }
 
-.image-wrap {
-  display: flex;
+.image-cats {
+  margin-top: 30px;
   width: 100%;
-  max-width: 500px;
-  position: absolute;
-  bottom: 0;
-}
-
-.char {
-  width: 100%;
-  height: auto;
-  margin: 0 auto;
-  user-select: none;
-}
-
-.arrow-wrap {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-shrink: 0;
-  margin: 0 auto;
-  height: 70px;
-  width: 70px;
-  background-color: #ff87c7;
-  border-radius: 9999px;
-  position: relative;
-  cursor: pointer;
-
-  &.disabled {
-    opacity: 0.7;
-    pointer-events: none;
-  }
-}
-
-.arrow {
   display: block;
-  transform: rotate(-180deg);
+}
+
+.button-submit {
+  display: flex;
+  align-self: flex-end;
+  flex-direction: row-reverse;
+  padding: 8px 10px 8px 14px;
+  gap: 4px;
+  font-weight: 600;
+  margin-top: -20px;
+  margin-bottom: 50px;
+}
+
+.copyright {
+  font-size: 10px;
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: $gray-200;
 }
