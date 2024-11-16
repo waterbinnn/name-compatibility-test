@@ -1,3 +1,4 @@
+@import './fonts';
 @import './reset';
 
 *,
@@ -27,12 +28,7 @@ body {
     'Segoe UI Symbol',
     sans-serif;
   box-sizing: border-box;
-  background: linear-gradient(
-    180deg,
-    rgba(22, 26, 255, 1) 0%,
-    rgba(76, 243, 255, 1) 65%,
-    rgba(255, 255, 255, 1) 100%
-  );
+  background: linear-gradient(180deg, #161aff 0%, #4cf3ff 65%, #ffffff 100%);
   width: 100%;
   min-height: 100vh;
 }
@@ -44,12 +40,7 @@ body {
   margin: 0 auto;
   position: relative;
   padding: 30px 20px;
-  background: linear-gradient(
-    180deg,
-    rgba(22, 26, 255, 1) 0%,
-    rgba(76, 243, 255, 1) 65%,
-    rgba(255, 255, 255, 1) 100%
-  );
+  background: linear-gradient(180deg, #161aff 0%, #4cf3ff 65%, #ffffff 100%);
 }
 
 .hidden {
