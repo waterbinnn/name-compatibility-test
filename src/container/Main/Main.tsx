@@ -31,6 +31,11 @@ export const Main = () => {
   const [isValid, setIsValid] = useState<boolean>(false);
 
   useEffect(() => {
+    setName1('');
+    setName2('');
+  }, []);
+
+  useEffect(() => {
     const checkValid = (value: string) => {
       if (koreanRegex.test(value) && value.length === 3) {
         return true;
