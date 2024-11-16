@@ -11,18 +11,25 @@ html,
 body {
   font-family: 'pretend';
   box-sizing: border-box;
-  font-weight: 400;
-  background-color: $dark-black;
+  background: linear-gradient(
+    180deg,
+    rgba(22, 26, 255, 1) 0%,
+    rgba(76, 243, 255, 1) 65%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  width: 100%;
+  min-height: 100vh;
 }
 
 .container {
   width: 100%;
-  height: 100dvh;
-  max-width: 768px;
+  height: 100%;
+  max-width: 480px;
   margin: 0 auto;
   position: relative;
+  padding: 30px 20px;
 }
 
-.padding {
-  padding: 35px 16px 0;
+.hidden {
+  display: none;
 }
