@@ -37,7 +37,7 @@ export const Main = () => {
 
   useEffect(() => {
     const checkValid = (value: string) => {
-      if (koreanRegex.test(value) && value.length === 3) {
+      if (koreanRegex.test(value) && value.length >= 2) {
         return true;
       } else {
         return false;
@@ -86,7 +86,7 @@ export const Main = () => {
       </div>
 
       <span className={cx('desc')}>
-        이름을 입력해 주세요. (세자리의 한글 이름만 가능합니다.)
+        이름을 입력해 주세요. (2~4자리의 한글 이름만 가능합니다.)
       </span>
 
       <Button
@@ -101,7 +101,7 @@ export const Main = () => {
       </Button>
 
       <span className={cx('copyright')}>
-        ©copyright waterbinn | Made by waterbinn
+        ©copyright waterbinn | made by waterbinn
       </span>
     </main>
   );

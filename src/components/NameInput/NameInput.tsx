@@ -18,8 +18,8 @@ export const NameInput = forwardRef<HTMLInputElement, Props>(
         placeholder={placeholder}
         className={classes}
         ref={ref}
-        minLength={3}
-        maxLength={3}
+        minLength={2}
+        maxLength={4}
         value={value}
         {...rest}
       />
