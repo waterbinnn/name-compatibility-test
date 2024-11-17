@@ -5,7 +5,7 @@ import styles from './Result.module.scss';
 
 import { Button } from '@waterbin/ui-kit';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState, useRef } from 'react';
+import { useCallback, useEffect, useState, useRef, useTransition } from 'react';
 import Image from 'next/image';
 import saveAs from 'file-saver';
 import { useNameStore } from '@/store';
@@ -15,6 +15,7 @@ import html2canvas from 'html2canvas';
 
 export const Result = () => {
   const router = useRouter();
+  const [pending, startTransition] = useTransition();
   const { styled: cx } = useStyle(styles);
 
   const { name1, name2, setName1, setName2 } = useNameStore(
@@ -28,7 +29,9 @@ export const Result = () => {
 
   const resultRef = useRef<HTMLDivElement>(null);
 
-  const [nameBox, setNameBox] = useState<string[]>([]);
+  const [nameBox, setNameBox] = useState<{ char: string; source: string }[]>(
+    []
+  );
   const [countedLines, setCountedLines] = useState<number[][]>([[]]);
   const [isError, setIsError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -54,15 +57,18 @@ export const Result = () => {
       let mixedArr = [];
       const nameArr = name1.split('');
       const name2Arr = name2.split('');
+      const maxLength = Math.max(nameArr.length, name2Arr.length); // 최대 글자 수 계산
 
-      for (let i = 0; i < 3; i++) {
-        mixedArr.push(nameArr[i], name2Arr[i]);
+      for (let i = 0; i < maxLength; i++) {
+        if (nameArr[i]) mixedArr.push({ char: nameArr[i], source: 'name1' });
+        if (name2Arr[i]) mixedArr.push({ char: name2Arr[i], source: 'name2' });
       }
       return mixedArr;
     }
 
     if (name1 && name2) {
-      setNameBox(mixStrings(name1, name2));
+      const mixed = mixStrings(name1, name2);
+      setNameBox(mixed);
     }
   }, [name1, name2]);
 
@@ -110,7 +116,7 @@ export const Result = () => {
 
     if (!nameBox || nameBox.length === 0) return;
 
-    const firstArray = nameBox.map((name) => splitHangulAndCount(name)); // 첫 번째 배열
+    const firstArray = nameBox.map((name) => splitHangulAndCount(name.char)); // 첫 번째 배열
     const allResults = [firstArray]; // 중간 배열 결과를 저장할 배열
 
     let currentArray = firstArray;
@@ -126,58 +132,67 @@ export const Result = () => {
     setCountedLines(allResults); // 모든 결과를 상태에 저장
   }, [nameBox]);
 
-  const handleDownload = useCallback(async () => {
-    if (!resultRef.current) return;
+  const handleDownload = useCallback(() => {
+    startTransition(async () => {
+      if (!resultRef.current) return;
 
-    try {
-      const contentImage = resultRef.current;
-      const canvas = await html2canvas(contentImage, {
-        useCORS: true, // 외부 이미지 허용
-        scale: 2,
-        ignoreElements: (element) => {
-          return element.id === 'ignore-download';
-        },
+      try {
+        const contentImage = resultRef.current;
+        const canvas = await html2canvas(contentImage, {
+          useCORS: true, // 외부 이미지 허용
+          scale: 2,
+          ignoreElements: (element) => {
+            return element.id === 'ignore-download';
+          },
 
-        onclone: (el) => {
-          const countText = el.querySelectorAll('li');
-          const h2Element = el.querySelector('#header');
-          const boxText = el.querySelectorAll('#box');
+          onclone: (el) => {
+            const countText = el.querySelectorAll('#count');
+            const h2Element = el.querySelector('#header');
+            const boxText = el.querySelectorAll('#box');
 
-          if (h2Element instanceof HTMLElement) {
-            h2Element.style.paddingBottom = '20px';
-            h2Element.style.marginTop = '-20px';
-          }
+            if (h2Element instanceof HTMLElement) {
+              h2Element.style.paddingBottom = '20px';
+              h2Element.style.marginTop = '-20px';
+            }
 
-          boxText.forEach((element) => {
-            if (element instanceof HTMLElement) {
-              element.style.lineHeight = '0.44';
+            const boxStyle = (element: Element) => {
+              if (element instanceof HTMLElement) {
+                element.style.paddingBottom = '30px';
+                element.style.display = 'inline-block';
+              }
+            };
+
+            boxText.forEach((element) => {
+              boxStyle(element);
+            });
+
+            countText.forEach((element) => {
+              boxStyle(element);
+            });
+          },
+        });
+
+        const fileName = `${name1}♥︎${name2}=${countedLines[countedLines.length - 1].join('')}.png`;
+
+        const isMobile = navigator.userAgent === 'mobile' || 'tablet';
+
+        if (isMobile) {
+          const link = document.createElement('a');
+          link.href = canvas.toDataURL('image/png');
+          link.download = fileName;
+          link.click();
+        } else {
+          canvas.toBlob((blob) => {
+            if (blob !== null) {
+              saveAs(blob, fileName);
             }
           });
-
-          countText.forEach((element) => {
-            element.style.lineHeight = '0.5px';
-          });
-        },
-      });
-
-      const fileName = `${name1}♥︎${name2}=${countedLines[4] && countedLines[4].join('')}.png`;
-
-      if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-        const link = document.createElement('a');
-        link.href = canvas.toDataURL('image/png');
-        link.download = fileName;
-        link.click();
-      } else {
-        canvas.toBlob((blob) => {
-          if (blob !== null) {
-            saveAs(blob, fileName);
-          }
-        });
+        }
+      } catch (error) {
+        console.error('이미지 저장 실패요 ,, ', error);
       }
-    } catch (error) {
-      console.error('이미지 저장 실패요 ,, ', error);
-    }
-  }, [countedLines, name1, name2]);
+    });
+  }, [countedLines, name1, name2, startTransition]);
 
   return (
     <>
@@ -204,7 +219,9 @@ export const Result = () => {
               </div>
               <p className={cx('header-text-sm')}>우리의 이름 궁합은</p>
               <strong className={cx('header-text-point')}>
-                {countedLines[4] && countedLines[4].join('')}%
+                {countedLines.length > 0 &&
+                  countedLines[countedLines.length - 1].join('')}
+                %
               </strong>
             </h2>
           </header>
@@ -212,8 +229,13 @@ export const Result = () => {
           <main className={cx('main-wrap')}>
             <div className={cx('name-box-wrap')}>
               {nameBox.map((name, index) => (
-                <div className={cx('name-box')} key={index} id='box'>
-                  {name}
+                <div
+                  className={cx('name-box', {
+                    green: name.source === 'name1',
+                  })}
+                  key={index}
+                >
+                  <span id='box'>{name.char}</span>
                 </div>
               ))}
             </div>
@@ -221,12 +243,14 @@ export const Result = () => {
             <div className={cx('list-wrap')}>
               {countedLines.map((number, index) => (
                 <ol
-                  className={cx('list', { result: index === 4 })}
+                  className={cx('list', {
+                    result: index === countedLines.length - 1,
+                  })}
                   key={`line-${index}`}
                 >
                   {number.map((count, idx) => (
                     <li key={`count-${idx}`} className={cx('count')}>
-                      {count}
+                      <span id='count'>{count}</span>
                     </li>
                   ))}
                 </ol>
@@ -240,6 +264,7 @@ export const Result = () => {
               fullWidth
               className={cx('button')}
               onClick={handleDownload}
+              loading={pending}
             >
               저장하기
             </Button>
@@ -256,7 +281,7 @@ export const Result = () => {
       )}
 
       {/* 로딩중 */}
-      {isLoading && (
+      {!isError && isLoading && (
         <div className={cx('gif-wrap')}>
           <strong className={cx('loading-text')}>궁합 계산 중 ..... </strong>
           <Image
