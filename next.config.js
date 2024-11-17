@@ -4,7 +4,7 @@ const path = require('path');
 module.exports = {
   sassOptions: {
     includePaths: [path.join(__dirname, 'src/styles')],
-    prependData: `@import "src/styles/_variables.scss"; @import "src/styles/_fonts.scss";`,
+    prependData: `@import "src/styles/_variables.scss";`,
   },
   webpack(config) {
     config.module.rules.push(
