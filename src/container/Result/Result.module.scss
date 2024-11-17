@@ -11,7 +11,7 @@
   height: auto;
   max-height: 70px;
   min-height: 32px;
-  font-weight: $font-bold;
+  font-weight: 400;
   user-select: none;
   color: $white;
   aspect-ratio: 1;
@@ -21,7 +21,7 @@
 }
 
 %text-animation {
-  color: $green;
+  color: $skyblue;
   animation: color 1s ease-in infinite alternate;
 }
 
@@ -29,22 +29,28 @@
   @extend %center;
   user-select: none;
   max-width: 420px;
-  margin: 20px auto;
+  margin: 0 auto;
+  margin-bottom: 20px;
   position: relative;
 
   &-text {
     font-size: $h2;
-    font-weight: $font-bold;
+    font-weight: 500;
     color: $white;
     display: inline-block;
     text-align: center;
+    letter-spacing: 0.04em;
 
     &-sm {
       font-size: 30px;
-      font-weight: $font-bold;
+      font-weight: 500;
       display: inline-block;
       color: $white;
       word-break: auto-phrase;
+    }
+
+    &.error {
+      text-align: left;
     }
   }
 
@@ -65,14 +71,14 @@
     @extend %text-animation;
     font-size: $h2;
     letter-spacing: 0.04em;
-    font-weight: $font-bold;
+    font-weight: 500;
   }
 }
 
 .image-cats {
   position: absolute;
-  right: 0;
-  top: 30px;
+  right: -16px;
+  top: 51px;
   z-index: 1;
   display: inline-block;
 }
@@ -131,7 +137,6 @@
 }
 
 .button {
-  font-weight: $font-semibold;
   font-size: $button-font-size;
   padding: 14px 0;
   border-radius: 12px;
@@ -157,10 +162,10 @@
 .gif-wrap {
   @extend %center;
   flex-direction: column;
-  margin: 0 auto;
+  margin: auto;
   gap: 50px;
   width: 100%;
-  height: 100vh;
+  height: 90vh;
   max-width: 420px;
 }
 
@@ -171,7 +176,7 @@
 
   &-text {
     font-size: 28px;
-    font-weight: $font-bold;
+    font-weight: 400;
     color: $white;
   }
 }

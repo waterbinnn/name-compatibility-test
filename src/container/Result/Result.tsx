@@ -278,7 +278,7 @@ export const Result = () => {
       {/* 에러 발생 */}
       {isError && (
         <div className={cx('container', 'error-wrap')}>
-          <h1 className={cx('header-text')}>
+          <h1 className={cx('header-text', 'error')}>
             이름을
             <br />
             불러오지

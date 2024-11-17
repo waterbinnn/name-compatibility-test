@@ -1,12 +1,13 @@
 .main {
   display: flex;
   flex-direction: column;
+  padding: 30px 10px;
 }
 
 .title {
   font-size: $h1;
   line-height: 1.1;
-  font-weight: $font-bold;
+  font-weight: 500;
   color: $white;
   user-select: none;
 }
@@ -40,7 +41,6 @@
   flex-direction: row-reverse;
   padding: 8px 10px 8px 14px;
   gap: 4px;
-  font-weight: 600;
   margin-top: -20px;
   margin-bottom: 50px;
 }

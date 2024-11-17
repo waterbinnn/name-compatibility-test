@@ -1,32 +1,14 @@
-@import './fonts';
 @import './reset';
 
 *,
 *::before,
 *::after {
   box-sizing: border-box;
-  font-family: 'Pretendard Variable', Pretendard, 'Open Sans', sans-serif;
 }
 
 #__next,
 html,
 body {
-  font-family:
-    'Pretendard Variable',
-    Pretendard,
-    'Open Sans',
-    -apple-system,
-    BlinkMacSystemFont,
-    system-ui,
-    Roboto,
-    'Helvetica Neue',
-    'Segoe UI',
-    'Apple SD Gothic Neo',
-    'Malgun Gothic',
-    'Apple Color Emoji',
-    'Segoe UI Emoji',
-    'Segoe UI Symbol',
-    sans-serif;
   box-sizing: border-box;
   background: linear-gradient(180deg, #161aff 0%, #4cf3ff 65%, #ffffff 100%);
   width: 100%;
@@ -39,7 +21,7 @@ body {
   max-width: 480px;
   margin: 0 auto;
   position: relative;
-  padding: 30px 20px;
+  padding: 26px 20px;
   background: linear-gradient(180deg, #161aff 0%, #4cf3ff 65%, #ffffff 100%);
 }
 
