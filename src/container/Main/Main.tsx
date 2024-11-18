@@ -15,6 +15,7 @@ import styles from './Main.module.scss';
 import { koreanRegex } from '@/constant';
 import { useNameStore } from '@/store';
 import { useShallow } from 'zustand/shallow';
+import { handlePreventClick } from '@/utils';
 
 export const Main = () => {
   const router = useRouter();
@@ -70,6 +71,7 @@ export const Main = () => {
         placeholder='blur'
         blurDataURL='/assets/chat_cat.png'
         priority
+        onContextMenu={handlePreventClick}
       />
 
       <div className={cx('input-name-wrap')}>

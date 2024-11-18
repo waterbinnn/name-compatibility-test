@@ -12,6 +12,7 @@ import { useNameStore } from '@/store';
 import { coda, consonant, strokeCount, vowel } from '@/constant';
 import { useShallow } from 'zustand/shallow';
 import html2canvas from 'html2canvas';
+import { handlePreventClick } from '@/utils';
 
 export const Result = () => {
   const router = useRouter();
@@ -174,7 +175,7 @@ export const Result = () => {
 
         const fileName = `${name1}♥︎${name2}=${countedLines[countedLines.length - 1].join('')}.png`;
 
-        const isMobile = navigator.userAgent === 'mobile' || 'tablet';
+        const isMobile = /Mobi/i.test(window.navigator.userAgent);
 
         if (isMobile) {
           const link = document.createElement('a');
@@ -210,6 +211,7 @@ export const Result = () => {
               alt='cats'
               aria-hidden
               unoptimized
+              onContextMenu={handlePreventClick}
             />
             <h2 className={cx('header-text-wrap')} id='header'>
               <div className={cx('header-name-wrap')}>
@@ -285,6 +287,7 @@ export const Result = () => {
         <div className={cx('gif-wrap')}>
           <strong className={cx('loading-text')}>궁합 계산 중 ..... </strong>
           <Image
+            onContextMenu={handlePreventClick}
             alt='loading'
             src='/assets/loading-cats.gif'
             aria-label='loading'
