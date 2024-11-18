@@ -196,21 +196,20 @@ export const Result = () => {
 
         const isMobile = /Mobi/i.test(window.navigator.userAgent);
 
-        if (isMobile) {
-          const link = document.createElement('a');
-          link.href = canvas.toDataURL('image/png');
-          link.download = fileName;
-          document.body.appendChild(link);
-          link.click();
-
-          document.body.removeChild(link);
-        } else {
-          canvas.toBlob((blob) => {
-            if (blob !== null) {
+        canvas.toBlob((blob) => {
+          if (blob !== null) {
+            if (isMobile) {
+              const link = document.createElement('a');
+              document.body.appendChild(link);
+              link.href = canvas.toDataURL('image/png');
+              link.download = fileName;
+              link.click();
+              document.body.removeChild(link);
+            } else {
               saveAs(blob, fileName);
             }
-          });
-        }
+          }
+        });
       } catch (error) {
         console.error('이미지 저장 실패요 ,, ', error);
       }
