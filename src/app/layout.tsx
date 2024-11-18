@@ -3,6 +3,7 @@ import '@/styles/globals.scss';
 
 import localFont from 'next/font/local';
 import { GoogleAnalytics } from '@/lib';
+import Head from './head';
 
 const pretendard = localFont({
   src: '../../public/fonts/PretendardVariable.woff2',
@@ -31,6 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='ko' className={pretendard.className}>
+      <Head />
       <GoogleAnalytics />
       <body>{children}</body>
     </html>
