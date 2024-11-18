@@ -20,12 +20,13 @@ import { handlePreventClick } from '@/utils';
 export const Main = () => {
   const router = useRouter();
   const { styled: cx } = useStyle(styles);
-  const { name1, name2, setName1, setName2 } = useNameStore(
+  const { name1, name2, setName1, setName2, setIsWatched } = useNameStore(
     useShallow((state) => ({
       name1: state.name1,
       name2: state.name2,
       setName1: state.setName1,
       setName2: state.setName2,
+      setIsWatched: state.setIsWatched,
     }))
   );
 
@@ -34,6 +35,7 @@ export const Main = () => {
   useEffect(() => {
     setName1('');
     setName2('');
+    setIsWatched(false);
   }, []);
 
   useEffect(() => {

@@ -19,14 +19,17 @@ export const Result = () => {
   const [pending, startTransition] = useTransition();
   const { styled: cx } = useStyle(styles);
 
-  const { name1, name2, setName1, setName2 } = useNameStore(
-    useShallow((state) => ({
-      name1: state.name1,
-      name2: state.name2,
-      setName1: state.setName1,
-      setName2: state.setName2,
-    }))
-  );
+  const { name1, name2, setName1, setName2, isWatched, setIsWatched } =
+    useNameStore(
+      useShallow((state) => ({
+        name1: state.name1,
+        name2: state.name2,
+        isWatched: state.isWatched,
+        setName1: state.setName1,
+        setName2: state.setName2,
+        setIsWatched: state.setIsWatched,
+      }))
+    );
 
   const resultRef = useRef<HTMLDivElement>(null);
 
@@ -36,16 +39,32 @@ export const Result = () => {
   const [countedLines, setCountedLines] = useState<number[][]>([[]]);
   const [isError, setIsError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isCSR, setIsCSR] = useState<boolean>(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2500);
-
-    return () => {
-      clearTimeout(timer);
-    };
+    setIsCSR(true);
   }, []);
+
+  useEffect(() => {
+    if (!isCSR) return;
+
+    if (!name1 || !name2) {
+      setIsWatched(false);
+      router.push('/');
+      return;
+    }
+
+    if (isWatched) {
+      setIsLoading(false);
+    } else {
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+        setIsWatched(true);
+      }, 1500);
+
+      return () => clearTimeout(timer); // 타이머 클리어
+    }
+  }, [isCSR, isWatched, name1, name2, router, setIsWatched]);
 
   const handleGoToMain = useCallback(() => {
     router.push('/');
@@ -283,7 +302,7 @@ export const Result = () => {
       )}
 
       {/* 로딩중 */}
-      {!isError && isLoading && (
+      {!isError && isCSR && !isWatched && isLoading && (
         <div className={cx('gif-wrap')}>
           <strong className={cx('loading-text')}>궁합 계산 중 ..... </strong>
           <Image
