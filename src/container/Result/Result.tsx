@@ -242,7 +242,7 @@ export const Result = () => {
               <strong className={cx('header-text-point')}>
                 {countedLines.length > 0 &&
                   countedLines[countedLines.length - 1].join('')}
-                %
+                점
               </strong>
             </h2>
           </header>
@@ -287,7 +287,7 @@ export const Result = () => {
               onClick={handleDownload}
               loading={pending}
             >
-              저장하기
+              이미지 저장하기
             </Button>
             <Button
               size='lg'
