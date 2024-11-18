@@ -200,7 +200,10 @@ export const Result = () => {
           const link = document.createElement('a');
           link.href = canvas.toDataURL('image/png');
           link.download = fileName;
+          document.body.appendChild(link);
           link.click();
+
+          document.body.removeChild(link);
         } else {
           canvas.toBlob((blob) => {
             if (blob !== null) {
