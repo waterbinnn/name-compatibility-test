@@ -11,6 +11,7 @@
   background-color: $white;
   border-radius: 0;
   z-index: 100;
+  user-select: none;
 
   &::placeholder {
     color: $gray-200;
