@@ -1,7 +1,7 @@
 import Script from 'next/script';
 
 export const GoogleAnalytics = () => {
-  const gaId = process.env.NEXT_PUBLIC_GA_ID;
+  const gaId = 'G-WPC01BS7BT';
 
   return (
     <>
