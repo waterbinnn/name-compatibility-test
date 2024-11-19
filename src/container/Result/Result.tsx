@@ -200,56 +200,59 @@ export const Result = () => {
           },
         });
 
-        const fileName = `${name1}_${name2}의_이름궁합은_${countedLines[countedLines.length - 1].join('')}점`;
+        const rawFileName = `${name1}_${name2}의_이름궁합은_${countedLines[countedLines.length - 1].join('')}점`;
+        const fileName = rawFileName.replace(/[\\/:*?"<>|]/g, '_');
 
         canvas.toBlob(async (blob) => {
-          if (blob !== null) {
-            if (isMobile) {
-              // 공유하기 버튼 클릭시 동작
-              if (type === 'share') {
-                setIsSharing(true);
-                const file = new File([blob], `${fileName}.jpg`, {
-                  type: 'image/jpg',
-                });
-
-                if (navigator.share) {
-                  try {
-                    await navigator.share({
-                      files: [file],
-                      title: '공유된 이미지',
-                      text: '이 이미지를 확인해보세요!',
-                    });
-                  } catch (error) {
-                    alert('공유 실패');
-                    return;
-                  } finally {
-                  }
-                } else {
-                  alert('이 브라우저에서 지원되지 않습니다.');
-                }
-                setIsSharing(false);
-              }
-
-              // 다운로드 버튼 클릭시 동작
-              if (type === 'download') {
-                setIsDownloading(true);
-                let link = document.createElement('a');
-                document.body.appendChild(link);
-                link.setAttribute('target', '_blank');
-                link.href = canvas.toDataURL('image/jpg');
-                link.download = `${fileName}.jpg`;
-                link.click();
-                document.body.removeChild(link);
-                setIsDownloading(false);
-              }
-            } else {
-              if (type === 'download') {
-                saveAs(blob, fileName);
-              }
-              return;
-            }
+          if (!blob) {
+            console.error('Blob 생성 실패');
+            return;
           }
-        });
+
+          if (isMobile) {
+            // 공유하기 버튼 클릭시 동작
+            if (type === 'share') {
+              setIsSharing(true);
+              const file = new File([blob], `${fileName}.jpg`, {
+                type: 'image/jpg',
+              });
+
+              if (navigator.share) {
+                try {
+                  await navigator.share({
+                    files: [file],
+                    title: '공유된 이미지',
+                    text: '이 이미지를 확인해보세요!',
+                  });
+                } catch (error) {
+                  alert('공유 실패');
+                }
+              } else {
+                alert('이 브라우저에서 지원되지 않습니다.');
+              }
+
+              setIsSharing(false);
+            } else if (type === 'download') {
+              // 다운로드 버튼 클릭시 동작
+              setIsDownloading(true);
+              const url = URL.createObjectURL(blob);
+              let link = document.createElement('a');
+              link.setAttribute('target', '_blank');
+              // document.body.appendChild(link);
+              link.href = url;
+              // link.href = canvas.toDataURL('image/jpg');
+              link.download = `${fileName}.jpg`;
+              link.click();
+              URL.revokeObjectURL(url); // 리소스 해제
+              setIsDownloading(false);
+            }
+          } else {
+            // 데스크톱 다운로드 기능
+            setIsDownloading(true);
+            saveAs(blob, `${fileName}.jpg`);
+            setIsDownloading(false);
+          }
+        }, 'image/jpg');
       }
     } catch (error) {
       console.error('이미지 생성 실패요 ,, ', error);
@@ -327,7 +330,6 @@ export const Result = () => {
               fullWidth
               className={cx('button')}
               onClick={() => handleClickButton('download')}
-              onTouchStart={() => handleClickButton('download')}
               loading={isDownloading}
             >
               이미지 저장하기
@@ -338,7 +340,6 @@ export const Result = () => {
                 fullWidth
                 className={cx('button', 'share')}
                 onClick={() => handleClickButton('share')}
-                onTouchStart={() => handleClickButton('share')}
                 loading={isSharing}
               >
                 결과 공유하기
