@@ -145,7 +145,11 @@
   }
 
   &.restart {
-    background-color: #24dbff;
+    background-color: #53f3ff;
+  }
+
+  &.share {
+    background-color: $green;
   }
 }
 

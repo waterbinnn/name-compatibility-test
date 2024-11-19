@@ -16,8 +16,9 @@ import { handlePreventClick } from '@/utils';
 
 export const Result = () => {
   const router = useRouter();
-  const [pending, startTransition] = useTransition();
   const { styled: cx } = useStyle(styles);
+
+  const isMobile = /Mobi/i.test(window.navigator.userAgent);
 
   const { name1, name2, setName1, setName2, isWatched, setIsWatched } =
     useNameStore(
@@ -40,6 +41,8 @@ export const Result = () => {
   const [isError, setIsError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isCSR, setIsCSR] = useState<boolean>(false);
+  const [isDownloading, setIsDownloading] = useState<boolean>(false);
+  const [isSharing, setIsSharing] = useState<boolean>(false);
 
   useEffect(() => {
     setIsCSR(true);
@@ -152,92 +155,96 @@ export const Result = () => {
     setCountedLines(allResults); // 모든 결과를 상태에 저장
   }, [nameBox]);
 
-  const handleDownload = () => {
-    startTransition(async () => {
-      const contentImage = resultRef.current;
+  const handleDownload = async (type?: 'share') => {
+    const contentImage = resultRef.current;
 
-      try {
-        if (contentImage) {
-          const canvas = await html2canvas(contentImage, {
-            useCORS: true, // 외부 이미지 허용
-            scale: 1,
-            ignoreElements: (element) => {
-              return element.id === 'ignore-download';
-            },
+    try {
+      if (contentImage) {
+        const canvas = await html2canvas(contentImage, {
+          useCORS: true,
+          scale: 1,
+          ignoreElements: (element) => {
+            return element.id === 'ignore-download';
+          },
 
-            onclone: (el) => {
-              const countText = el.querySelectorAll('#count');
-              const h2Element = el.querySelector('#header');
-              const boxText = el.querySelectorAll('#box');
+          onclone: (el) => {
+            const countText = el.querySelectorAll('#count');
+            const h2Element = el.querySelector('#header');
+            const boxText = el.querySelectorAll('#box');
 
-              if (h2Element instanceof HTMLElement) {
-                h2Element.style.paddingBottom = '20px';
-                h2Element.style.marginTop = '-20px';
-              }
-
-              const boxStyle = (element: Element) => {
-                if (element instanceof HTMLElement) {
-                  element.style.paddingBottom = '30px';
-                  element.style.display = 'inline-block';
-                }
-              };
-
-              boxText.forEach((element) => {
-                boxStyle(element);
-              });
-
-              countText.forEach((element) => {
-                boxStyle(element);
-              });
-            },
-          });
-
-          const fileName = `${name1}♥︎${name2}=${countedLines[countedLines.length - 1].join('')}.png`;
-
-          const isMobile = /Mobi/i.test(window.navigator.userAgent);
-          const sanitizedFileName =
-            `${name1}♥︎${name2}=${countedLines[countedLines.length - 1].join('')}`
-              .replace(/[\\/:*?"<>|]/g, '_')
-              .replace(/\n/g, '');
-
-          //   canvas.toBlob((blob) => {
-          //     if (blob !== null) {
-          //       if (isMobile) {
-          //         const link = document.createElement('a');
-          //         document.body.appendChild(link);
-          //         link.href = canvas.toDataURL('image/png');
-          //         link.download = `${sanitizedFileName}.png`;
-          //         link.click();
-          //         document.body.removeChild(link);
-          //       } else {
-          //         saveAs(blob, fileName);
-          //       }
-          //     }
-          //   });
-          // }
-          canvas.toBlob((blob) => {
-            if (blob) {
-              const url = window.URL.createObjectURL(blob);
-              const a = document.createElement('a');
-              a.href = url;
-              a.download = `${sanitizedFileName}.png`;
-              document.body.appendChild(a);
-
-              // 모바일과 데스크톱에서 공통적으로 처리
-              a.click();
-
-              // 리소스 정리
-              document.body.removeChild(a);
-              window.URL.revokeObjectURL(url);
-            } else {
-              console.error('Blob 생성에 실패했습니다.');
+            if (h2Element instanceof HTMLElement) {
+              h2Element.style.paddingBottom = '20px';
+              h2Element.style.marginTop = '-20px';
             }
-          }, 'image/png');
-        }
-      } catch (error) {
-        console.error('이미지 저장 실패요 ,, ', error);
+
+            const boxStyle = (element: Element) => {
+              if (element instanceof HTMLElement) {
+                element.style.paddingBottom = '30px';
+                element.style.display = 'inline-block';
+              }
+            };
+
+            boxText.forEach((element) => {
+              boxStyle(element);
+            });
+
+            countText.forEach((element) => {
+              boxStyle(element);
+            });
+          },
+        });
+
+        const fileName = `${name1}♥︎${name2}=${countedLines[countedLines.length - 1].join('')}`;
+
+        canvas.toBlob(async (blob) => {
+          if (blob !== null) {
+            if (isMobile) {
+              // 공유하기 버튼 클릭시 동작
+              if (type === 'share') {
+                setIsSharing(true);
+                const file = new File([blob], `${fileName}.jpg`, {
+                  type: 'image/jpg',
+                });
+
+                if (navigator.share) {
+                  try {
+                    await navigator.share({
+                      files: [file],
+                      title: '공유된 이미지',
+                      text: '이 이미지를 확인해보세요!',
+                    });
+                  } catch (error) {
+                    alert('공유 실패');
+                    return;
+                  } finally {
+                  }
+                } else {
+                  alert('이 브라우저에서 지원되지 않습니다.');
+                }
+                setIsSharing(false);
+              } else {
+                setIsDownloading(true);
+                // 다운로드 버튼 클릭시 동작
+                let link = document.createElement('a');
+                document.body.appendChild(link);
+                link.setAttribute('target', '_blank');
+                link.href = canvas.toDataURL('image/jpg');
+                link.download = `${fileName}.jpg`;
+                link.click();
+                document.body.removeChild(link);
+                setIsDownloading(false);
+              }
+            } else {
+              if (!type) {
+                saveAs(blob, fileName);
+              }
+            }
+          }
+        });
       }
-    });
+    } catch (error) {
+      console.error('이미지 저장 실패요 ,, ', error);
+    }
   };
 
   return (
@@ -310,12 +317,22 @@ export const Result = () => {
               size='lg'
               fullWidth
               className={cx('button')}
-              onClick={handleDownload}
-              loading={pending}
-              onTouchStart={handleDownload}
+              onClick={() => handleDownload()}
+              loading={isDownloading}
             >
               이미지 저장하기
             </Button>
+            {isMobile && (
+              <Button
+                size='lg'
+                fullWidth
+                className={cx('button', 'share')}
+                onClick={() => handleDownload('share')}
+                loading={isSharing}
+              >
+                결과 공유하기
+              </Button>
+            )}
             <Button
               size='lg'
               fullWidth
