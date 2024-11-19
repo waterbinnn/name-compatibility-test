@@ -154,62 +154,65 @@ export const Result = () => {
 
   const handleDownload = useCallback(() => {
     startTransition(async () => {
-      if (!resultRef.current) return;
+      const contentImage = resultRef.current;
 
       try {
-        const contentImage = resultRef.current;
-        const canvas = await html2canvas(contentImage, {
-          useCORS: true, // 외부 이미지 허용
-          scale: 2,
-          ignoreElements: (element) => {
-            return element.id === 'ignore-download';
-          },
+        if (contentImage) {
+          const canvas = await html2canvas(contentImage, {
+            useCORS: true, // 외부 이미지 허용
+            scale: 1,
+            ignoreElements: (element) => {
+              return element.id === 'ignore-download';
+            },
 
-          onclone: (el) => {
-            const countText = el.querySelectorAll('#count');
-            const h2Element = el.querySelector('#header');
-            const boxText = el.querySelectorAll('#box');
+            onclone: (el) => {
+              const countText = el.querySelectorAll('#count');
+              const h2Element = el.querySelector('#header');
+              const boxText = el.querySelectorAll('#box');
 
-            if (h2Element instanceof HTMLElement) {
-              h2Element.style.paddingBottom = '20px';
-              h2Element.style.marginTop = '-20px';
-            }
-
-            const boxStyle = (element: Element) => {
-              if (element instanceof HTMLElement) {
-                element.style.paddingBottom = '30px';
-                element.style.display = 'inline-block';
+              if (h2Element instanceof HTMLElement) {
+                h2Element.style.paddingBottom = '20px';
+                h2Element.style.marginTop = '-20px';
               }
-            };
 
-            boxText.forEach((element) => {
-              boxStyle(element);
-            });
+              const boxStyle = (element: Element) => {
+                if (element instanceof HTMLElement) {
+                  element.style.paddingBottom = '30px';
+                  element.style.display = 'inline-block';
+                }
+              };
 
-            countText.forEach((element) => {
-              boxStyle(element);
-            });
-          },
-        });
+              boxText.forEach((element) => {
+                boxStyle(element);
+              });
 
-        const fileName = `${name1}♥︎${name2}=${countedLines[countedLines.length - 1].join('')}.png`;
+              countText.forEach((element) => {
+                boxStyle(element);
+              });
+            },
+          });
 
-        const isMobile = /Mobi/i.test(window.navigator.userAgent);
+          const fileName = `${name1}♥︎${name2}=${countedLines[countedLines.length - 1].join('')}.png`;
 
-        canvas.toBlob((blob) => {
-          if (blob !== null) {
-            if (isMobile) {
-              const link = document.createElement('a');
-              document.body.appendChild(link);
-              link.href = canvas.toDataURL('image/png');
-              link.download = fileName;
-              link.click();
-              document.body.removeChild(link);
-            } else {
-              saveAs(blob, fileName);
+          const isMobile = /Mobi/i.test(window.navigator.userAgent);
+
+          canvas.toBlob((blob) => {
+            if (blob !== null) {
+              if (isMobile) {
+                console.log('mobile');
+                const link = document.createElement('a');
+                document.body.appendChild(link);
+                link.href = canvas.toDataURL('image/png');
+                link.download = fileName;
+                link.click();
+                document.body.removeChild(link);
+              } else {
+                console.log('saveAs');
+                saveAs(blob, fileName);
+              }
             }
-          }
-        });
+          });
+        }
       } catch (error) {
         console.error('이미지 저장 실패요 ,, ', error);
       }
