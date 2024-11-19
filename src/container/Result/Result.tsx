@@ -164,96 +164,100 @@ export const Result = () => {
   const handleClickButton = async (type?: 'share' | 'download') => {
     const contentImage = resultRef.current;
 
+    if (!contentImage) {
+      return;
+    }
+
     try {
-      if (contentImage) {
-        const canvas = await html2canvas(contentImage, {
-          useCORS: true,
-          scale: 1,
-          ignoreElements: (element) => {
-            return element.id === 'ignore-download';
-          },
+      const canvas = await html2canvas(contentImage, {
+        useCORS: true,
+        scale: 1,
+        ignoreElements: (element) => {
+          return element.id === 'ignore-download';
+        },
 
-          onclone: (el) => {
-            const countText = el.querySelectorAll('#count');
-            const h2Element = el.querySelector('#header');
-            const boxText = el.querySelectorAll('#box');
+        onclone: (el) => {
+          const countText = el.querySelectorAll('#count');
+          const h2Element = el.querySelector('#header');
+          const boxText = el.querySelectorAll('#box');
 
-            if (h2Element instanceof HTMLElement) {
-              h2Element.style.paddingBottom = '20px';
-              h2Element.style.marginTop = '-20px';
-            }
-
-            const boxStyle = (element: Element) => {
-              if (element instanceof HTMLElement) {
-                element.style.paddingBottom = '30px';
-                element.style.display = 'inline-block';
-              }
-            };
-
-            boxText.forEach((element) => {
-              boxStyle(element);
-            });
-
-            countText.forEach((element) => {
-              boxStyle(element);
-            });
-          },
-        });
-
-        const rawFileName = `${name1}_${name2}의_이름궁합은_${countedLines[countedLines.length - 1].join('')}점`;
-        const fileName = rawFileName.replace(/[\\/:*?"<>|]/g, '_');
-
-        canvas.toBlob(async (blob) => {
-          if (!blob) {
-            console.error('Blob 생성 실패');
-            return;
+          if (h2Element instanceof HTMLElement) {
+            h2Element.style.paddingBottom = '20px';
+            h2Element.style.marginTop = '-20px';
           }
 
-          if (isMobile) {
-            // 공유하기 버튼 클릭시 동작
-            if (type === 'share') {
-              setIsSharing(true);
-              const file = new File([blob], `${fileName}.jpg`, {
-                type: 'image/jpg',
-              });
-
-              if (navigator.share) {
-                try {
-                  await navigator.share({
-                    files: [file],
-                    title: '공유된 이미지',
-                    text: '이 이미지를 확인해보세요!',
-                  });
-                } catch (error) {
-                  alert('공유 실패');
-                }
-              } else {
-                alert('이 브라우저에서 지원되지 않습니다.');
-              }
-
-              setIsSharing(false);
-            } else if (type === 'download') {
-              // 다운로드 버튼 클릭시 동작
-              setIsDownloading(true);
-              const url = URL.createObjectURL(blob);
-              let link = document.createElement('a');
-              link.setAttribute('target', '_blank');
-              // document.body.appendChild(link);
-              link.href = url;
-              // link.href = canvas.toDataURL('image/jpg');
-              link.download = `${fileName}.jpg`;
-              link.click();
-              URL.revokeObjectURL(url); // 리소스 해제
-              setIsDownloading(false);
+          const boxStyle = (element: Element) => {
+            if (element instanceof HTMLElement) {
+              element.style.paddingBottom = '30px';
+              element.style.display = 'inline-block';
             }
-          } else {
-            // 데스크톱 다운로드 기능
+          };
+
+          boxText.forEach((element) => {
+            boxStyle(element);
+          });
+
+          countText.forEach((element) => {
+            boxStyle(element);
+          });
+        },
+      });
+
+      const rawFileName = `${name1}_${name2}의_이름궁합은_${countedLines[countedLines.length - 1].join('')}점`;
+      const fileName = rawFileName.replace(/[\\/:*?"<>|]/g, '_');
+
+      canvas.toBlob(async (blob) => {
+        if (!blob) {
+          console.error('Blob 생성 실패');
+          return;
+        }
+
+        if (isMobile) {
+          // 공유하기 버튼 클릭시 동작
+          if (type === 'share') {
+            setIsSharing(true);
+            const file = new File([blob], `${fileName}.jpg`, {
+              type: 'image/jpg',
+            });
+
+            if (navigator.share) {
+              try {
+                await navigator.share({
+                  files: [file],
+                  title: '공유된 이미지',
+                  text: '이 이미지를 확인해보세요!',
+                });
+              } catch (error) {
+                alert('공유 실패');
+              }
+            } else {
+              alert('이 브라우저에서 지원되지 않습니다.');
+            }
+
+            setIsSharing(false);
+          } else if (type === 'download') {
+            // 다운로드 버튼 클릭시 동작
+            // setIsDownloading(true);
+            // const url = URL.createObjectURL(blob);
+            // let link = document.createElement('a');
+            // document.body.appendChild(link);
+            // link.setAttribute('target', '_blank');
+            // link.href = canvas.toDataURL('image/jpg');
+            // link.download = `${fileName}.jpg`;
+            // link.click();
+            // document.body.removeChild(link);
+            // setIsDownloading(false);
             setIsDownloading(true);
             saveAs(blob, `${fileName}.jpg`);
             setIsDownloading(false);
           }
-        }, 'image/jpg');
-      }
+        } else {
+          // 데스크톱 다운로드 기능
+          setIsDownloading(true);
+          saveAs(blob, `${fileName}.jpg`);
+          setIsDownloading(false);
+        }
+      }, 'image/jpg');
     } catch (error) {
       console.error('이미지 생성 실패요 ,, ', error);
     }
