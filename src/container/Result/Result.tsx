@@ -152,7 +152,7 @@ export const Result = () => {
     setCountedLines(allResults); // 모든 결과를 상태에 저장
   }, [nameBox]);
 
-  const handleDownload = useCallback(() => {
+  const handleDownload = () => {
     startTransition(async () => {
       const contentImage = resultRef.current;
 
@@ -195,29 +195,50 @@ export const Result = () => {
           const fileName = `${name1}♥︎${name2}=${countedLines[countedLines.length - 1].join('')}.png`;
 
           const isMobile = /Mobi/i.test(window.navigator.userAgent);
+          const sanitizedFileName =
+            `${name1}♥︎${name2}=${countedLines[countedLines.length - 1].join('')}`
+              .replace(/[\\/:*?"<>|]/g, '_')
+              .replace(/\n/g, '');
 
+          //   canvas.toBlob((blob) => {
+          //     if (blob !== null) {
+          //       if (isMobile) {
+          //         const link = document.createElement('a');
+          //         document.body.appendChild(link);
+          //         link.href = canvas.toDataURL('image/png');
+          //         link.download = `${sanitizedFileName}.png`;
+          //         link.click();
+          //         document.body.removeChild(link);
+          //       } else {
+          //         saveAs(blob, fileName);
+          //       }
+          //     }
+          //   });
+          // }
           canvas.toBlob((blob) => {
-            if (blob !== null) {
-              if (isMobile) {
-                console.log('mobile');
-                const link = document.createElement('a');
-                document.body.appendChild(link);
-                link.href = canvas.toDataURL('image/png');
-                link.download = fileName;
-                link.click();
-                document.body.removeChild(link);
-              } else {
-                console.log('saveAs');
-                saveAs(blob, fileName);
-              }
+            if (blob) {
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `${sanitizedFileName}.png`;
+              document.body.appendChild(a);
+
+              // 모바일과 데스크톱에서 공통적으로 처리
+              a.click();
+
+              // 리소스 정리
+              document.body.removeChild(a);
+              window.URL.revokeObjectURL(url);
+            } else {
+              console.error('Blob 생성에 실패했습니다.');
             }
-          });
+          }, 'image/png');
         }
       } catch (error) {
         console.error('이미지 저장 실패요 ,, ', error);
       }
     });
-  }, [countedLines, name1, name2, startTransition]);
+  };
 
   return (
     <>
@@ -291,6 +312,7 @@ export const Result = () => {
               className={cx('button')}
               onClick={handleDownload}
               loading={pending}
+              onTouchStart={handleDownload}
             >
               이미지 저장하기
             </Button>
