@@ -48,8 +48,8 @@ export const Result = () => {
   }, []);
 
   useEffect(() => {
-    const mobile = /Mobi/i.test(window.navigator.userAgent);
     if (isCSR) {
+      const mobile = /Mobi/i.test(window.navigator.userAgent);
       setIsMobile(mobile);
     }
   }, [isCSR]);
@@ -161,7 +161,7 @@ export const Result = () => {
     setCountedLines(allResults); // 모든 결과를 상태에 저장
   }, [nameBox]);
 
-  const handleDownload = async (type?: 'share') => {
+  const handleClickButton = async (type?: 'share' | 'download') => {
     const contentImage = resultRef.current;
 
     try {
@@ -228,9 +228,11 @@ export const Result = () => {
                   alert('이 브라우저에서 지원되지 않습니다.');
                 }
                 setIsSharing(false);
-              } else {
+              }
+
+              // 다운로드 버튼 클릭시 동작
+              if (type === 'download') {
                 setIsDownloading(true);
-                // 다운로드 버튼 클릭시 동작
                 let link = document.createElement('a');
                 document.body.appendChild(link);
                 link.setAttribute('target', '_blank');
@@ -241,15 +243,16 @@ export const Result = () => {
                 setIsDownloading(false);
               }
             } else {
-              if (!type) {
+              if (type === 'download') {
                 saveAs(blob, fileName);
               }
+              return;
             }
           }
         });
       }
     } catch (error) {
-      console.error('이미지 저장 실패요 ,, ', error);
+      console.error('이미지 생성 실패요 ,, ', error);
     }
   };
 
@@ -323,7 +326,8 @@ export const Result = () => {
               size='lg'
               fullWidth
               className={cx('button')}
-              onClick={() => handleDownload()}
+              onClick={() => handleClickButton('download')}
+              onTouchStart={() => handleClickButton('download')}
               loading={isDownloading}
             >
               이미지 저장하기
@@ -333,7 +337,8 @@ export const Result = () => {
                 size='lg'
                 fullWidth
                 className={cx('button', 'share')}
-                onClick={() => handleDownload('share')}
+                onClick={() => handleClickButton('share')}
+                onTouchStart={() => handleClickButton('share')}
                 loading={isSharing}
               >
                 결과 공유하기
