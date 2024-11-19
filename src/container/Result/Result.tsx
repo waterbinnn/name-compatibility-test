@@ -18,8 +18,6 @@ export const Result = () => {
   const router = useRouter();
   const { styled: cx } = useStyle(styles);
 
-  const isMobile = /Mobi/i.test(window.navigator.userAgent);
-
   const { name1, name2, setName1, setName2, isWatched, setIsWatched } =
     useNameStore(
       useShallow((state) => ({
@@ -43,10 +41,18 @@ export const Result = () => {
   const [isCSR, setIsCSR] = useState<boolean>(false);
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const [isSharing, setIsSharing] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
 
   useEffect(() => {
     setIsCSR(true);
   }, []);
+
+  useEffect(() => {
+    const mobile = /Mobi/i.test(window.navigator.userAgent);
+    if (isCSR) {
+      setIsMobile(mobile);
+    }
+  }, [isCSR]);
 
   useEffect(() => {
     if (!isCSR) return;
@@ -194,7 +200,7 @@ export const Result = () => {
           },
         });
 
-        const fileName = `${name1}♥︎${name2}=${countedLines[countedLines.length - 1].join('')}`;
+        const fileName = `${name1}_${name2}의_이름궁합은_${countedLines[countedLines.length - 1].join('')}점`;
 
         canvas.toBlob(async (blob) => {
           if (blob !== null) {
