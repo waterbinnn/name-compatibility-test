@@ -48,11 +48,11 @@ export const Result = () => {
   }, []);
 
   useEffect(() => {
-    if (isCSR) {
-      const mobile = /Mobi/i.test(window.navigator.userAgent);
+    if (typeof window !== 'undefined') {
+      const mobile = /Mobi|Android/i.test(window.navigator.userAgent);
       setIsMobile(mobile);
     }
-  }, [isCSR]);
+  }, []);
 
   useEffect(() => {
     if (!isCSR) return;
@@ -164,6 +164,8 @@ export const Result = () => {
   const handleClickButton = async (type?: 'share' | 'download') => {
     const contentImage = resultRef.current;
 
+    alert('isClicked');
+
     if (!contentImage) {
       return;
     }
@@ -239,18 +241,14 @@ export const Result = () => {
             setIsSharing(false);
           } else if (type === 'download') {
             // 다운로드 버튼 클릭시 동작
-            // setIsDownloading(true);
-            // const url = URL.createObjectURL(blob);
-            // let link = document.createElement('a');
-            // document.body.appendChild(link);
-            // link.setAttribute('target', '_blank');
-            // link.href = canvas.toDataURL('image/jpg');
-            // link.download = `${fileName}.jpg`;
-            // link.click();
-            // document.body.removeChild(link);
-            // setIsDownloading(false);
             setIsDownloading(true);
-            saveAs(blob, `${fileName}.png`);
+            let link = document.createElement('a');
+            document.body.appendChild(link);
+            link.setAttribute('target', '_blank');
+            link.href = canvas.toDataURL('image/jpg');
+            link.download = `${fileName}.jpg`;
+            link.click();
+            document.body.removeChild(link);
             setIsDownloading(false);
           }
         } else {
