@@ -45,15 +45,14 @@ export const Result = () => {
 
   useEffect(() => {
     setIsCSR(true);
-    alert(window);
   }, []);
 
-  // useEffect(() => {
-  //   if (typeof window !== 'undefined') {
-  //     const mobile = /Mobi|Android/i.test(window.navigator.userAgent);
-  //     setIsMobile(mobile);
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const mobile = /Mobi|Android/i.test(window.navigator.userAgent);
+      setIsMobile(mobile);
+    }
+  }, []);
 
   useEffect(() => {
     if (!isCSR) return;
@@ -173,7 +172,7 @@ export const Result = () => {
     try {
       const canvas = await html2canvas(contentImage, {
         useCORS: true,
-        scale: 1,
+        scale: 2,
         ignoreElements: (element) => element.id === 'ignore-download',
         onclone: (el) => {
           const countText = el.querySelectorAll('#count');
@@ -237,14 +236,18 @@ export const Result = () => {
       setIsDownloading(false);
       return;
     }
-
+    console.log(blob);
     if (isMobile) {
-      let link = document.createElement('a');
-      document.body.appendChild(link);
-      link.href = `${canvas.toDataURL('image/png')}`;
-      link.setAttribute('target', '_blank'); //kakao
+      const dataUrl = canvas.toDataURL('image/png');
+      console.log('dataUrl', dataUrl);
+
+      const link = document.createElement('a');
+      link.href = dataUrl;
       link.download = `${fileName}.png`;
+      link.setAttribute('target', '_blank'); //kakao
+
       link.click();
+      console.log('link click', link);
 
       document.body.removeChild(link);
     } else {
