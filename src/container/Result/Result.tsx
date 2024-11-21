@@ -172,7 +172,7 @@ export const Result = () => {
     try {
       const canvas = await html2canvas(contentImage, {
         useCORS: true,
-        scale: 2,
+        scale: 1,
         ignoreElements: (element) => element.id === 'ignore-download',
         onclone: (el) => {
           const countText = el.querySelectorAll('#count');
@@ -236,10 +236,26 @@ export const Result = () => {
       setIsDownloading(false);
       return;
     }
-    console.log(blob);
+
+    const isSafari =
+      /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+
     if (isMobile) {
-      const dataUrl = canvas.toDataURL('image/png');
-      window.open(dataUrl, '_blank');
+      const url = URL.createObjectURL(blob);
+
+      if (isSafari) {
+        // iOS Safari는 window.open 사용
+        window.open(url, '_blank');
+      } else {
+        // 일반 브라우저
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${fileName}.png`;
+        link.click();
+      }
+
+      // const dataUrl = canvas.toDataURL('image/png');
+      // window.open(url, '_blank');
       // console.log('dataUrl', dataUrl);
 
       // const link = document.createElement('a');
@@ -251,6 +267,7 @@ export const Result = () => {
       // console.log('link click', link);
 
       // document.body.removeChild(link);
+      URL.revokeObjectURL(url);
     } else {
       saveAs(blob, `${fileName}.png`);
     }
