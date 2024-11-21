@@ -238,22 +238,24 @@ export const Result = () => {
     }
 
     if (isMobile) {
-      console.log('isMobile', isMobile);
-      const url = URL.createObjectURL(blob);
+      saveAs(blob, `${fileName}.png`);
 
-      const dataUrl = canvas.toDataURL('image/png');
-      window.open(url, '_blank');
-      console.log('dataUrl', dataUrl);
+      // console.log('isMobile', isMobile);
+      // const url = URL.createObjectURL(blob);
 
-      const link = document.createElement('a');
-      link.href = dataUrl;
-      link.download = `${fileName}.png`;
-      link.setAttribute('target', '_blank'); //kakao
+      // const dataUrl = canvas.toDataURL('image/png');
+      // window.open(url, '_blank');
+      // console.log('dataUrl', dataUrl);
 
-      link.click();
-      console.log('link click', link);
+      // const link = document.createElement('a');
+      // link.href = dataUrl;
+      // link.download = `${fileName}.png`;
+      // link.setAttribute('target', '_blank'); //kakao
 
-      document.body.removeChild(link);
+      // link.click();
+      // console.log('link click', link);
+
+      // document.body.removeChild(link);
     } else {
       saveAs(blob, `${fileName}.png`);
     }
