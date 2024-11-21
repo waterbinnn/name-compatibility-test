@@ -172,7 +172,7 @@ export const Result = () => {
     try {
       const canvas = await html2canvas(contentImage, {
         useCORS: true,
-        scale: 2,
+        scale: 1,
         ignoreElements: (element) => element.id === 'ignore-download',
         onclone: (el) => {
           const countText = el.querySelectorAll('#count');
