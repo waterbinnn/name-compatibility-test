@@ -237,37 +237,23 @@ export const Result = () => {
       return;
     }
 
-    const isSafari =
-      /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
-
     if (isMobile) {
+      console.log('isMobile', isMobile);
       const url = URL.createObjectURL(blob);
 
-      if (isSafari) {
-        // iOS Safari는 window.open 사용
-        window.open(url, '_blank');
-      } else {
-        // 일반 브라우저
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${fileName}.png`;
-        link.click();
-      }
+      const dataUrl = canvas.toDataURL('image/png');
+      window.open(url, '_blank');
+      console.log('dataUrl', dataUrl);
 
-      // const dataUrl = canvas.toDataURL('image/png');
-      // window.open(url, '_blank');
-      // console.log('dataUrl', dataUrl);
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = `${fileName}.png`;
+      link.setAttribute('target', '_blank'); //kakao
 
-      // const link = document.createElement('a');
-      // link.href = dataUrl;
-      // link.download = `${fileName}.png`;
-      // link.setAttribute('target', '_blank'); //kakao
+      link.click();
+      console.log('link click', link);
 
-      // link.click();
-      // console.log('link click', link);
-
-      // document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      document.body.removeChild(link);
     } else {
       saveAs(blob, `${fileName}.png`);
     }
@@ -319,14 +305,12 @@ export const Result = () => {
           <h1 className={cx('hidden')}>이름 궁합 결과</h1>
 
           <header className={cx('header')}>
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               className={cx('image-cats')}
               src={'/assets/cat.png'}
-              width={204}
-              height={172}
               alt='cats'
               aria-hidden
-              unoptimized
               onContextMenu={handlePreventClick}
             />
             <h2 className={cx('header-text-wrap')} id='header'>
