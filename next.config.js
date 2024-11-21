@@ -38,11 +38,17 @@ module.exports = {
   compiler: {
     reactRemoveProperties: { properties: ['^data-cy$'] },
   },
+  experimental: {
+    outputFileTracing: true,
+  },
   async headers() {
     return [
       {
         source: '/:path*',
-        headers: [{ key: 'Access-Control-Allow-Origin', value: '*' }],
+        headers: [
+          { key: 'Access-Control-Allow-Origin', value: '*' },
+          { key: 'Cache-Control', value: 'no-store, must-revalidate' },
+        ],
       },
     ];
   },
