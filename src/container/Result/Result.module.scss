@@ -183,6 +183,12 @@
   }
 }
 
+.ad-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
 @keyframes color {
   0% {
     color: $skyblue;

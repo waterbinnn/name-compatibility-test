@@ -13,6 +13,7 @@ import { coda, consonant, strokeCount, vowel } from '@/constant';
 import { useShallow } from 'zustand/shallow';
 import html2canvas from 'html2canvas';
 import { handlePreventClick } from '@/utils';
+import KakaoAdFit from '@/lib/KakaoAdFit';
 
 export const Result = () => {
   const router = useRouter();
@@ -31,6 +32,7 @@ export const Result = () => {
     );
 
   const resultRef = useRef<HTMLDivElement>(null);
+  const contentsRef = useRef<HTMLDivElement>(null);
 
   const [nameBox, setNameBox] = useState<{ char: string; source: string }[]>(
     []
@@ -157,16 +159,19 @@ export const Result = () => {
 
   const createCanvas = async (): Promise<HTMLCanvasElement | null> => {
     const contentImage = resultRef.current;
+    const onlyContent = contentsRef.current;
 
-    if (!contentImage) {
-      alert('!contentImage');
+    if (!contentImage || !onlyContent) {
       return null;
     }
 
     try {
+      const { height } = onlyContent.getBoundingClientRect();
+
       const canvas = await html2canvas(contentImage, {
         useCORS: true,
         scale: 2,
+        height: Math.ceil(height + 50),
         ignoreElements: (element) => element.id === 'ignore-download',
         onclone: (el) => {
           const countText = el.querySelectorAll('#count');
@@ -298,62 +303,63 @@ export const Result = () => {
       {!isLoading && !isError && countedLines[0].length > 0 && (
         <div className={cx('container')} ref={resultRef}>
           <h1 className={cx('hidden')}>이름 궁합 결과</h1>
-
-          <header className={cx('header')}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              className={cx('image-cats')}
-              src={'/assets/cat.png'}
-              alt='cats'
-              aria-hidden
-              onContextMenu={handlePreventClick}
-            />
-            <h2 className={cx('header-text-wrap')} id='header'>
-              <div className={cx('header-name-wrap')}>
-                <strong className={cx('header-text')}>{name1}</strong>
-                <span className={cx('header-text')}>🩵</span>
-                <strong className={cx('header-text')}>{name2}</strong>
-              </div>
-              <p className={cx('header-text-sm')}>우리의 이름 궁합은</p>
-              <strong className={cx('header-text-point')}>
-                {countedLines.length > 0 &&
-                  countedLines[countedLines.length - 1].join('')}
-                점
-              </strong>
-            </h2>
-          </header>
-
-          <main className={cx('main-wrap')}>
-            <div className={cx('name-box-wrap')}>
-              {nameBox.map((name, index) => (
-                <div
-                  className={cx('name-box', {
-                    green: name.source === 'name1',
-                  })}
-                  key={index}
-                >
-                  <span id='box'>{name.char}</span>
+          <div ref={contentsRef}>
+            <header className={cx('header')}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                className={cx('image-cats')}
+                src={'/assets/cat.png'}
+                alt='cats'
+                aria-hidden
+                onContextMenu={handlePreventClick}
+              />
+              <h2 className={cx('header-text-wrap')} id='header'>
+                <div className={cx('header-name-wrap')}>
+                  <strong className={cx('header-text')}>{name1}</strong>
+                  <span className={cx('header-text')}>🩵</span>
+                  <strong className={cx('header-text')}>{name2}</strong>
                 </div>
-              ))}
-            </div>
+                <p className={cx('header-text-sm')}>우리의 이름 궁합은</p>
+                <strong className={cx('header-text-point')}>
+                  {countedLines.length > 0 &&
+                    countedLines[countedLines.length - 1].join('')}
+                  점
+                </strong>
+              </h2>
+            </header>
 
-            <div className={cx('list-wrap')}>
-              {countedLines.map((number, index) => (
-                <ol
-                  className={cx('list', {
-                    result: index === countedLines.length - 1,
-                  })}
-                  key={`line-${index}`}
-                >
-                  {number.map((count, idx) => (
-                    <li key={`count-${idx}`} className={cx('count')}>
-                      <span id='count'>{count}</span>
-                    </li>
-                  ))}
-                </ol>
-              ))}
-            </div>
-          </main>
+            <main className={cx('main-wrap')}>
+              <div className={cx('name-box-wrap')}>
+                {nameBox.map((name, index) => (
+                  <div
+                    className={cx('name-box', {
+                      green: name.source === 'name1',
+                    })}
+                    key={index}
+                  >
+                    <span id='box'>{name.char}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className={cx('list-wrap')}>
+                {countedLines.map((number, index) => (
+                  <ol
+                    className={cx('list', {
+                      result: index === countedLines.length - 1,
+                    })}
+                    key={`line-${index}`}
+                  >
+                    {number.map((count, idx) => (
+                      <li key={`count-${idx}`} className={cx('count')}>
+                        <span id='count'>{count}</span>
+                      </li>
+                    ))}
+                  </ol>
+                ))}
+              </div>
+            </main>
+          </div>
 
           <div className={cx('button-wrap')} id='ignore-download'>
             <Button
@@ -365,17 +371,17 @@ export const Result = () => {
             >
               이미지 저장하기
             </Button>
-            {/* {isMobile && ( */}
-            <Button
-              size='lg'
-              fullWidth
-              className={cx('button', 'share')}
-              onClick={handleShare}
-              loading={isSharing}
-            >
-              결과 공유하기
-            </Button>
-            {/* )} */}
+            {isMobile && (
+              <Button
+                size='lg'
+                fullWidth
+                className={cx('button', 'share')}
+                onClick={handleShare}
+                loading={isSharing}
+              >
+                결과 공유하기
+              </Button>
+            )}
             <Button
               size='lg'
               fullWidth
@@ -384,6 +390,10 @@ export const Result = () => {
             >
               다시하기
             </Button>
+          </div>
+
+          <div className={cx('ad-wrap')}>
+            <KakaoAdFit unitType='result' />
           </div>
         </div>
       )}

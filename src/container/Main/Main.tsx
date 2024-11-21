@@ -16,6 +16,7 @@ import { koreanRegex } from '@/constant';
 import { useNameStore } from '@/store';
 import { useShallow } from 'zustand/shallow';
 import { handlePreventClick } from '@/utils';
+import KakaoAdFit from '@/lib/KakaoAdFit';
 
 export const Main = () => {
   const router = useRouter();
@@ -55,58 +56,64 @@ export const Main = () => {
   }, [name1, name2]);
 
   return (
-    <main className={cx('container', 'main')}>
-      <h1 className={cx('title')}>
-        우리의
-        <br />
-        이름 궁합은??~?
-      </h1>
+    <>
+      <main className={cx('container', 'main')}>
+        <div className={cx('ad-wrap')}>
+          <KakaoAdFit unitType='main' />
+        </div>
 
-      <Image
-        className={cx('image-cats')}
-        src={'/assets/chat_cat.png'}
-        layout='responsive'
-        width={250}
-        height={245}
-        alt='cats'
-        aria-hidden
-        placeholder='blur'
-        blurDataURL='/assets/chat_cat.png'
-        priority
-        onContextMenu={handlePreventClick}
-      />
+        <h1 className={cx('title')}>
+          우리의
+          <br />
+          이름 궁합은??~?
+        </h1>
 
-      <div className={cx('input-name-wrap')}>
-        <NameInput
-          value={name1}
-          placeholder='이름1'
-          onChange={(e) => setName1(e.target.value)}
+        <Image
+          className={cx('image-cats')}
+          src={'/assets/chat_cat.png'}
+          layout='responsive'
+          width={250}
+          height={245}
+          alt='cats'
+          aria-hidden
+          placeholder='blur'
+          blurDataURL='/assets/chat_cat.png'
+          priority
+          onContextMenu={handlePreventClick}
         />
-        <NameInput
-          placeholder='이름2'
-          value={name2}
-          onChange={(e) => setName2(e.target.value)}
-        />
-      </div>
 
-      <span className={cx('desc')}>
-        이름을 입력해 주세요. (2~4자리의 한글 이름만 가능합니다.)
-      </span>
+        <div className={cx('input-name-wrap')}>
+          <NameInput
+            value={name1}
+            placeholder='이름1'
+            onChange={(e) => setName1(e.target.value)}
+          />
+          <NameInput
+            placeholder='이름2'
+            value={name2}
+            onChange={(e) => setName2(e.target.value)}
+          />
+        </div>
 
-      <Button
-        className={cx('button-submit')}
-        onClick={() => router.push('/result')}
-        variant='iconText'
-        size='lg'
-        disabled={!isValid}
-        icon={<Arrow />}
-      >
-        궁합 보기
-      </Button>
+        <span className={cx('desc')}>
+          이름을 입력해 주세요. (2~4자리의 한글 이름만 가능합니다.)
+        </span>
 
-      <span className={cx('copyright')}>
-        ©copyright waterbinn | made by waterbinn
-      </span>
-    </main>
+        <Button
+          className={cx('button-submit')}
+          onClick={() => router.push('/result')}
+          variant='iconText'
+          size='lg'
+          disabled={!isValid}
+          icon={<Arrow />}
+        >
+          궁합 보기
+        </Button>
+
+        <span className={cx('copyright')}>
+          ©copyright waterbinn | made by waterbinn
+        </span>
+      </main>
+    </>
   );
 };
