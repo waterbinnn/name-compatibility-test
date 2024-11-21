@@ -239,7 +239,7 @@ export const Result = () => {
       const link = document.createElement('a');
       link.href = dataUrl;
       link.download = `${fileName}.png`;
-      link.setAttribute('target', '_blank'); //kakao
+      link.setAttribute('target', '_blank');
       link.click();
       URL.revokeObjectURL(dataUrl);
     } else {
@@ -249,9 +249,15 @@ export const Result = () => {
   }, [fileName]);
 
   const handleShare = useCallback(async () => {
+    const isChrome = /Chrome/.test(window.navigator.userAgent);
+
     setIsSharing(true);
 
-    const isChrome = /Chrome/.test(window.navigator.userAgent);
+    const alertError = () => {
+      alert(
+        '이 브라우저에서는 기본 공유를 사용할 수 없습니다. 이미지 저장하기를 클릭 후 공유해주세요'
+      );
+    };
 
     const canvas = await createCanvas();
     if (!canvas) {
@@ -275,19 +281,16 @@ export const Result = () => {
           files: [file],
         });
       } catch (error) {
-        alert(
-          '이 브라우저에서는 기본 공유를 사용할 수 없습니다. 이미지 저장하기를 클릭 후 공유해주세요'
-        );
+        console.error(error);
       }
-    } else if (isChrome) {
-      alert(
-        '이 브라우저에서는 기본 공유를 사용할 수 없습니다. 이미지 저장하기를 클릭 후 공유해주세요'
-      );
     } else {
-      alert('이 브라우저에서 공유하기를 지원하지 않습니다.');
+      if (isMobile && isChrome) {
+        alertError();
+      }
+      alertError();
     }
     setIsSharing(false);
-  }, [fileName]);
+  }, [fileName, isMobile]);
 
   return (
     <>
