@@ -232,19 +232,25 @@ export const Result = () => {
 
     const blob = await generateBlob(canvas);
     if (!blob) {
+      alert('!blob');
       setIsDownloading(false);
       return;
     }
-    // setIsDownloading(true);
-    // let link = document.createElement('a');
-    // document.body.appendChild(link);
-    // link.setAttribute('target', '_blank');
-    // link.href = canvas.toDataURL('image/jpg');
-    // link.download = `${fileName}.jpg`;
-    // link.click();
-    // document.body.removeChild(link);
-    // setIsDownloading(false);
-    saveAs(blob, `${fileName}.png`);
+
+    if (isMobile) {
+      alert('mobile');
+      let link = document.createElement('a');
+      document.body.appendChild(link);
+      link.setAttribute('target', '_blank'); //kakao
+      link.href = canvas.toDataURL('image/png');
+      link.download = `${fileName}.png`;
+      link.click();
+
+      document.body.removeChild(link);
+    } else {
+      alert('web');
+      saveAs(blob, `${fileName}.png`);
+    }
     setIsDownloading(false);
   };
 
@@ -263,27 +269,23 @@ export const Result = () => {
       return;
     }
 
-    if (isMobile) {
-      const file = new File([blob], `${fileName}.png`, {
-        type: 'image/png',
-      });
+    const file = new File([blob], `${fileName}.png`, {
+      type: 'image/png',
+    });
 
-      if (navigator.share) {
-        try {
-          await navigator.share({
-            files: [file],
-            title: '공유된 이미지',
-            text: '이 이미지를 확인해보세요!',
-          });
-        } catch (error) {
-          console.error('공유 실패:', error);
-          alert('공유 실패');
-        }
-      } else {
-        alert('이 브라우저에서 공유하기를 지원하지 않습니다.');
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          files: [file],
+          title: '공유된 이미지',
+          text: '이 이미지를 확인해보세요!',
+        });
+      } catch (error) {
+        console.error('공유 실패:', error);
+        alert('공유 실패');
       }
     } else {
-      alert('모바일 환경에서만 공유 기능을 사용할 수 있습니다.');
+      alert('이 브라우저에서 공유하기를 지원하지 않습니다.');
     }
 
     setIsSharing(false);
