@@ -38,17 +38,10 @@ export const Result = () => {
   const [countedLines, setCountedLines] = useState<number[][]>([[]]);
   const [isError, setIsError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isCSR, setIsCSR] = useState<boolean>(false);
+
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const [isSharing, setIsSharing] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(false);
-
-  const isChrome = /Chrome/.test(navigator.userAgent);
-  const isKakaoBrowser = /KAKAOTALK/i.test(navigator.userAgent);
-
-  useEffect(() => {
-    setIsCSR(true);
-  }, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -58,8 +51,6 @@ export const Result = () => {
   }, []);
 
   useEffect(() => {
-    if (!isCSR) return;
-
     if (!name1 || !name2) {
       setIsWatched(false);
       router.push('/');
@@ -76,7 +67,7 @@ export const Result = () => {
 
       return () => clearTimeout(timer); // 타이머 클리어
     }
-  }, [isCSR, isWatched, name1, name2, router, setIsWatched]);
+  }, [isWatched, name1, name2, router, setIsWatched]);
 
   const handleGoToMain = useCallback(() => {
     router.push('/');
@@ -175,7 +166,7 @@ export const Result = () => {
     try {
       const canvas = await html2canvas(contentImage, {
         useCORS: true,
-        scale: 1,
+        scale: 2,
         ignoreElements: (element) => element.id === 'ignore-download',
         onclone: (el) => {
           const countText = el.querySelectorAll('#count');
@@ -224,7 +215,7 @@ export const Result = () => {
     });
   };
 
-  const handleDownload = async () => {
+  const handleDownload = useCallback(async () => {
     setIsDownloading(true);
 
     const canvas = await createCanvas();
@@ -235,12 +226,14 @@ export const Result = () => {
 
     const blob = await generateBlob(canvas);
     if (!blob) {
-      alert('!blob');
       setIsDownloading(false);
       return;
     }
 
-    saveAs(blob, `${fileName}.png`);
+    const isKakaoBrowser = /kakao/i.test(
+      window.navigator.userAgent.toLowerCase()
+    );
+
     if (isKakaoBrowser) {
       const dataUrl = canvas.toDataURL('image/png');
       const link = document.createElement('a');
@@ -248,15 +241,17 @@ export const Result = () => {
       link.download = `${fileName}.png`;
       link.setAttribute('target', '_blank'); //kakao
       link.click();
-      document.body.removeChild(link);
+      URL.revokeObjectURL(dataUrl);
     } else {
       saveAs(blob, `${fileName}.png`);
     }
     setIsDownloading(false);
-  };
+  }, [fileName]);
 
-  const handleShare = async () => {
+  const handleShare = useCallback(async () => {
     setIsSharing(true);
+
+    const isChrome = /Chrome/.test(window.navigator.userAgent);
 
     const canvas = await createCanvas();
     if (!canvas) {
@@ -274,14 +269,15 @@ export const Result = () => {
       type: 'image/png',
     });
 
-    if (navigator.share && !isChrome) {
+    if (navigator.share) {
       try {
         await navigator.share({
           files: [file],
-          title: `${fileName}`,
         });
       } catch (error) {
-        console.error('공유 실패:', error);
+        alert(
+          '이 브라우저에서는 기본 공유를 사용할 수 없습니다. 이미지 저장하기를 클릭 후 공유해주세요'
+        );
       }
     } else if (isChrome) {
       alert(
@@ -291,7 +287,7 @@ export const Result = () => {
       alert('이 브라우저에서 공유하기를 지원하지 않습니다.');
     }
     setIsSharing(false);
-  };
+  }, [fileName]);
 
   return (
     <>
@@ -366,17 +362,17 @@ export const Result = () => {
             >
               이미지 저장하기
             </Button>
-            {isMobile && (
-              <Button
-                size='lg'
-                fullWidth
-                className={cx('button', 'share')}
-                onClick={handleShare}
-                loading={isSharing}
-              >
-                결과 공유하기
-              </Button>
-            )}
+            {/* {isMobile && ( */}
+            <Button
+              size='lg'
+              fullWidth
+              className={cx('button', 'share')}
+              onClick={handleShare}
+              loading={isSharing}
+            >
+              결과 공유하기
+            </Button>
+            {/* )} */}
             <Button
               size='lg'
               fullWidth
@@ -390,7 +386,7 @@ export const Result = () => {
       )}
 
       {/* 로딩중 */}
-      {!isError && isCSR && !isWatched && isLoading && (
+      {!isError && !isWatched && isLoading && (
         <div className={cx('gif-wrap')}>
           <strong className={cx('loading-text')}>궁합 계산 중 ..... </strong>
           <Image
