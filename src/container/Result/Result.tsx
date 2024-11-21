@@ -171,7 +171,7 @@ export const Result = () => {
     try {
       const canvas = await html2canvas(contentImage, {
         useCORS: true,
-        scale: 1,
+        scale: 2,
         ignoreElements: (element) => {
           return element.id === 'ignore-download';
         },
@@ -211,12 +211,14 @@ export const Result = () => {
           console.error('Blob 생성 실패');
           return;
         }
+        console.log(blob);
 
         if (isMobile) {
+          alert(`mobile ${blob.type}`);
           // 공유하기 버튼 클릭시 동작
           if (type === 'share') {
             setIsSharing(true);
-            const file = new File([blob], `${fileName}.jpg`, {
+            const file = new File([blob], `${fileName}.png`, {
               type: 'image/jpg',
             });
 
@@ -248,16 +250,16 @@ export const Result = () => {
             // document.body.removeChild(link);
             // setIsDownloading(false);
             setIsDownloading(true);
-            saveAs(blob, `${fileName}.jpg`);
+            saveAs(blob, `${fileName}.png`);
             setIsDownloading(false);
           }
         } else {
           // 데스크톱 다운로드 기능
           setIsDownloading(true);
-          saveAs(blob, `${fileName}.jpg`);
+          saveAs(blob, `${fileName}.png`);
           setIsDownloading(false);
         }
-      }, 'image/jpg');
+      });
     } catch (error) {
       console.error('이미지 생성 실패요 ,, ', error);
     }
