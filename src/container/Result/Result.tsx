@@ -45,14 +45,15 @@ export const Result = () => {
 
   useEffect(() => {
     setIsCSR(true);
+    alert(window);
   }, []);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const mobile = /Mobi|Android/i.test(window.navigator.userAgent);
-      setIsMobile(mobile);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (typeof window !== 'undefined') {
+  //     const mobile = /Mobi|Android/i.test(window.navigator.userAgent);
+  //     setIsMobile(mobile);
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (!isCSR) return;
@@ -238,18 +239,15 @@ export const Result = () => {
     }
 
     if (isMobile) {
-      alert('mobile');
       let link = document.createElement('a');
       document.body.appendChild(link);
-      // link.href = `${canvas.toDataURL('image/png')}`;
-      link.href = `${canvas.toDataURL('image/png')}?cache-bypass=${new Date().getTime()}`;
+      link.href = `${canvas.toDataURL('image/png')}`;
       link.setAttribute('target', '_blank'); //kakao
       link.download = `${fileName}.png`;
       link.click();
 
       document.body.removeChild(link);
     } else {
-      alert('web');
       saveAs(blob, `${fileName}.png`);
     }
     setIsDownloading(false);
