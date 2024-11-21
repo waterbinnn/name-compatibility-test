@@ -245,11 +245,12 @@ export const Result = () => {
       link.href = dataUrl;
       link.download = `${fileName}.png`;
       link.setAttribute('target', '_blank'); //kakao
-
-      link.click();
-      console.log('link click', link);
-
-      document.body.removeChild(link);
+      // window.open(dataUrl, '_blank');
+      setTimeout(() => {
+        link.click(); // 링크 클릭 유도
+        console.log('link clicked', link);
+        document.body.removeChild(link); // 링크 제거
+      }, 100); // Safari에서 약간의 지연 필요
     } else {
       saveAs(blob, `${fileName}.png`);
     }
