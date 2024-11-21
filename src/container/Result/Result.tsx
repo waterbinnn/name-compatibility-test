@@ -241,8 +241,9 @@ export const Result = () => {
       alert('mobile');
       let link = document.createElement('a');
       document.body.appendChild(link);
+      link.href = `${canvas.toDataURL('image/png')}`;
+      // link.href = `${canvas.toDataURL('image/png')}?cache-bypass=${new Date().getTime()}`;
       link.setAttribute('target', '_blank'); //kakao
-      link.href = canvas.toDataURL('image/png');
       link.download = `${fileName}.png`;
       link.click();
 
