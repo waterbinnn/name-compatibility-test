@@ -43,6 +43,9 @@ export const Result = () => {
   const [isSharing, setIsSharing] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
+  const isChrome = /Chrome/.test(navigator.userAgent);
+  const isKakaoBrowser = /KAKAOTALK/i.test(navigator.userAgent);
+
   useEffect(() => {
     setIsCSR(true);
   }, []);
@@ -237,25 +240,15 @@ export const Result = () => {
       return;
     }
 
-    if (isMobile) {
-      saveAs(blob, `${fileName}.png`);
-
-      // console.log('isMobile', isMobile);
-      // const url = URL.createObjectURL(blob);
-
-      // const dataUrl = canvas.toDataURL('image/png');
-      // window.open(url, '_blank');
-      // console.log('dataUrl', dataUrl);
-
-      // const link = document.createElement('a');
-      // link.href = dataUrl;
-      // link.download = `${fileName}.png`;
-      // link.setAttribute('target', '_blank'); //kakao
-
-      // link.click();
-      // console.log('link click', link);
-
-      // document.body.removeChild(link);
+    saveAs(blob, `${fileName}.png`);
+    if (isKakaoBrowser) {
+      const dataUrl = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = `${fileName}.png`;
+      link.setAttribute('target', '_blank'); //kakao
+      link.click();
+      document.body.removeChild(link);
     } else {
       saveAs(blob, `${fileName}.png`);
     }
@@ -281,21 +274,22 @@ export const Result = () => {
       type: 'image/png',
     });
 
-    if (navigator.share) {
+    if (navigator.share && !isChrome) {
       try {
         await navigator.share({
           files: [file],
-          title: '공유된 이미지',
-          text: '이 이미지를 확인해보세요!',
+          title: `${fileName}`,
         });
       } catch (error) {
         console.error('공유 실패:', error);
-        alert('공유 실패');
       }
+    } else if (isChrome) {
+      alert(
+        '이 브라우저에서는 기본 공유를 사용할 수 없습니다. 이미지 저장하기를 클릭 후 공유해주세요'
+      );
     } else {
       alert('이 브라우저에서 공유하기를 지원하지 않습니다.');
     }
-
     setIsSharing(false);
   };
 
