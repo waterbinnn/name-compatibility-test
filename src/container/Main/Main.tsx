@@ -15,7 +15,7 @@ import styles from './Main.module.scss';
 import { koreanRegex } from '@/constant';
 import { useNameStore } from '@/store';
 import { useShallow } from 'zustand/shallow';
-import { handlePreventClick } from '@/utils';
+
 import KakaoAdFit from '@/lib/KakaoAdFit';
 
 export const Main = () => {
@@ -70,18 +70,14 @@ export const Main = () => {
 
         <Image
           className={cx('image-cats')}
-          src={'/assets/chat_cat.png'}
+          src={'/assets/chat_cat.webp'}
           layout='responsive'
           width={250}
           height={245}
           alt='cats'
           aria-hidden
-          placeholder='blur'
-          blurDataURL='/assets/chat_cat.png'
           priority
-          onContextMenu={handlePreventClick}
         />
-
         <div className={cx('input-name-wrap')}>
           <NameInput
             value={name1}

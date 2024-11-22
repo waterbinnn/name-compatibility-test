@@ -12,7 +12,6 @@ import { useNameStore } from '@/store';
 import { coda, consonant, strokeCount, vowel } from '@/constant';
 import { useShallow } from 'zustand/shallow';
 import html2canvas from 'html2canvas';
-import { handlePreventClick } from '@/utils';
 import KakaoAdFit from '@/lib/KakaoAdFit';
 
 export const Result = () => {
@@ -308,10 +307,10 @@ export const Result = () => {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 className={cx('image-cats')}
-                src={'/assets/cat.png'}
+                src={'/assets/cat.webp'}
                 alt='cats'
                 aria-hidden
-                onContextMenu={handlePreventClick}
+                loading='eager'
               />
               <h2 className={cx('header-text-wrap')} id='header'>
                 <div className={cx('header-name-wrap')}>
@@ -405,7 +404,6 @@ export const Result = () => {
         <div className={cx('gif-wrap')}>
           <strong className={cx('loading-text')}>궁합 계산 중 ..... </strong>
           <Image
-            onContextMenu={handlePreventClick}
             alt='loading'
             src='/assets/loading-cats.gif'
             aria-label='loading'
@@ -413,8 +411,6 @@ export const Result = () => {
             width={335}
             height={350}
             layout='responsive'
-            placeholder='blur'
-            blurDataURL='/assets/loading-cats.png'
             priority
             unoptimized
           />
