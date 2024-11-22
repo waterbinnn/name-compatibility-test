@@ -259,6 +259,7 @@ export const Result = () => {
 
     try {
       const canvas = await createCanvas();
+
       if (!canvas) {
         alert('!canvas');
 
@@ -279,7 +280,13 @@ export const Result = () => {
       });
 
       if (!navigator.canShare || !navigator.canShare({ files: [file] })) {
-        saveAs(blob, `${fileName}.png`);
+        const dataUrl = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = `${fileName}.png`;
+        link.setAttribute('target', '_blank');
+        link.click();
+        URL.revokeObjectURL(dataUrl);
       } else {
         await navigator.share({
           files: [file],
