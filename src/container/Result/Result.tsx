@@ -43,6 +43,7 @@ export const Result = () => {
 
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const [isSharing, setIsSharing] = useState<boolean>(false);
+
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [canShare, setCanShare] = useState(false);
 
@@ -285,6 +286,8 @@ export const Result = () => {
         alertError();
         throw new Error('공유가 지원되지 않음');
       }
+
+      setCanShare(true);
 
       await navigator.share({
         files: [file],
