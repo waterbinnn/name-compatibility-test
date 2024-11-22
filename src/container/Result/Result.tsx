@@ -279,16 +279,17 @@ export const Result = () => {
         type: 'image/png',
       });
 
-      if (!navigator.canShare || !navigator.canShare({ files: [file] })) {
-        // const dataUrl = canvas.toDataURL('image/png');
-        // const link = document.createElement('a');
-        // link.href = dataUrl;
-        // link.download = `${fileName}.png`;
-        // link.setAttribute('target', '_blank');
-        // link.click();
-        // URL.revokeObjectURL(dataUrl);
-        alert('!navigator share');
+      if (!navigator.share || !navigator.canShare({ files: [file] })) {
+        alert('!navigatorshare');
+        const dataUrl = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = `${fileName}.png`;
+        link.setAttribute('target', '_blank');
+        link.click();
+        URL.revokeObjectURL(dataUrl);
       }
+
       await navigator.share({
         files: [file],
       });
