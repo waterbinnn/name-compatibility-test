@@ -44,6 +44,7 @@ export const Result = () => {
   const [isSharing, setIsSharing] = useState<boolean>(false);
 
   const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [isCanShare, setIsCanShare] = useState<boolean>(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -221,6 +222,15 @@ export const Result = () => {
     });
   };
 
+  const blobToBase64 = (blob: Blob): Promise<string | ArrayBuffer | null> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result); // Base64로 변환된 데이터 반환
+      reader.onerror = reject;
+      reader.readAsDataURL(blob); // Blob 데이터를 Base64로 변환
+    });
+  };
+
   const handleDownload = async () => {
     setIsDownloading(true);
 
@@ -240,6 +250,10 @@ export const Result = () => {
       window.navigator.userAgent.toLowerCase()
     );
 
+    const isInstaBrowser = /instagram/i.test(
+      window.navigator.userAgent.toLowerCase()
+    );
+
     if (isKakaoBrowser) {
       const dataUrl = canvas.toDataURL('image/png');
       const link = document.createElement('a');
@@ -248,6 +262,17 @@ export const Result = () => {
       link.setAttribute('target', '_blank');
       link.click();
       URL.revokeObjectURL(dataUrl);
+    } else if (isInstaBrowser) {
+      const base64Image = await blobToBase64(blob);
+      if (typeof base64Image === 'string') {
+        const link = document.createElement('a');
+        link.href = base64Image;
+        link.download = `${fileName}.png`;
+        link.click();
+        URL.revokeObjectURL(link.href); // 메모리 해제
+      } else {
+        throw new Error('Base64 변환 실패');
+      }
     } else {
       saveAs(blob, `${fileName}.png`);
     }
@@ -280,22 +305,18 @@ export const Result = () => {
       });
 
       if (!navigator.share || !navigator.canShare({ files: [file] })) {
-        alert('!navigatorshare');
-        const dataUrl = canvas.toDataURL('image/png');
-        const link = document.createElement('a');
-        link.href = dataUrl;
-        link.download = `${fileName}.png`;
-        link.setAttribute('target', '_blank');
-        link.click();
-        URL.revokeObjectURL(dataUrl);
+        setIsCanShare(false);
+        alert('브라우저 지원X, 이미지 저장 후 공유 해주세요');
+        return;
       }
+
+      setIsCanShare(true);
 
       await navigator.share({
         files: [file],
       });
     } catch (error) {
       console.error(error);
-      alert('catch error');
     }
     setIsSharing(false);
   };
@@ -375,7 +396,7 @@ export const Result = () => {
               이미지 저장하기
             </Button>
 
-            {isMobile && (
+            {isMobile && isCanShare && (
               <Button
                 size='lg'
                 fullWidth
