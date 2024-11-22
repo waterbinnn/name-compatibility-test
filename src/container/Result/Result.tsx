@@ -44,6 +44,7 @@ export const Result = () => {
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const [isSharing, setIsSharing] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [canShare, setCanShare] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -253,9 +254,7 @@ export const Result = () => {
     setIsDownloading(false);
   }, [fileName]);
 
-  const handleShare = useCallback(async () => {
-    const isChrome = /Chrome/.test(window.navigator.userAgent);
-
+  const handleShare = async () => {
     setIsSharing(true);
 
     const alertError = () => {
@@ -264,38 +263,37 @@ export const Result = () => {
       );
     };
 
-    const canvas = await createCanvas();
-    if (!canvas) {
-      setIsSharing(false);
-      return;
-    }
-
-    const blob = await generateBlob(canvas);
-    if (!blob) {
-      setIsSharing(false);
-      return;
-    }
-
-    const file = new File([blob], `${fileName}.png`, {
-      type: 'image/png',
-    });
-
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          files: [file],
-        });
-      } catch (error) {
-        console.error(error);
+    try {
+      const canvas = await createCanvas();
+      if (!canvas) {
+        setIsSharing(false);
+        return;
       }
-    } else {
-      if (isMobile && isChrome) {
+
+      const blob = await generateBlob(canvas);
+      if (!blob) {
+        setIsSharing(false);
+        return;
+      }
+
+      const file = new File([blob], `${fileName}.png`, {
+        type: 'image/png',
+      });
+
+      if (!navigator.canShare || !navigator.canShare({ files: [file] })) {
+        setCanShare(false);
         alertError();
+        throw new Error('공유가 지원되지 않음');
       }
-      alertError();
+
+      await navigator.share({
+        files: [file],
+      });
+    } catch (error) {
+      console.error(error);
     }
     setIsSharing(false);
-  }, [fileName, isMobile]);
+  };
 
   return (
     <>
@@ -371,7 +369,7 @@ export const Result = () => {
             >
               이미지 저장하기
             </Button>
-            {isMobile && (
+            {isMobile && canShare && (
               <Button
                 size='lg'
                 fullWidth
