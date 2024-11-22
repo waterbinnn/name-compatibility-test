@@ -237,11 +237,11 @@ export const Result = () => {
       return;
     }
 
-    const isKakaoBrowser = /kakao/i.test(
+    const isInAppBrowser = /kakao|instagram|samsungbrowser|everytimeapp/i.test(
       window.navigator.userAgent.toLowerCase()
     );
 
-    if (isKakaoBrowser) {
+    if (isInAppBrowser) {
       const dataUrl = canvas.toDataURL('image/png');
       const link = document.createElement('a');
       link.href = dataUrl;
@@ -288,7 +288,6 @@ export const Result = () => {
       }
 
       setCanShare(true);
-
       await navigator.share({
         files: [file],
       });
@@ -372,7 +371,7 @@ export const Result = () => {
             >
               이미지 저장하기
             </Button>
-            {isMobile && canShare && (
+            {isMobile && (
               <Button
                 size='lg'
                 fullWidth
