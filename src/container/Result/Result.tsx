@@ -222,7 +222,7 @@ export const Result = () => {
     });
   };
 
-  const handleDownload = useCallback(async () => {
+  const handleDownload = async () => {
     setIsDownloading(true);
 
     const canvas = await createCanvas();
@@ -237,11 +237,11 @@ export const Result = () => {
       return;
     }
 
-    const isInAppBrowser = /kakao|instagram|samsungbrowser|everytimeapp/i.test(
+    const isKakaoBrowser = /kakao/i.test(
       window.navigator.userAgent.toLowerCase()
     );
 
-    if (isInAppBrowser) {
+    if (isKakaoBrowser) {
       const dataUrl = canvas.toDataURL('image/png');
       const link = document.createElement('a');
       link.href = dataUrl;
@@ -253,7 +253,7 @@ export const Result = () => {
       saveAs(blob, `${fileName}.png`);
     }
     setIsDownloading(false);
-  }, [fileName]);
+  };
 
   const handleShare = async () => {
     setIsSharing(true);
@@ -284,7 +284,7 @@ export const Result = () => {
       if (!navigator.canShare || !navigator.canShare({ files: [file] })) {
         setCanShare(false);
         alertError();
-        throw new Error('공유가 지원되지 않음');
+        return;
       }
 
       setCanShare(true);
@@ -371,6 +371,7 @@ export const Result = () => {
             >
               이미지 저장하기
             </Button>
+
             {isMobile && (
               <Button
                 size='lg'
@@ -382,6 +383,7 @@ export const Result = () => {
                 결과 공유하기
               </Button>
             )}
+
             <Button
               size='lg'
               fullWidth
