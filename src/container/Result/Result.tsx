@@ -48,6 +48,7 @@ export const Result = () => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const mobile = /Mobi|Android/i.test(window.navigator.userAgent);
+
       setIsMobile(mobile);
     }
   }, []);
@@ -259,12 +260,16 @@ export const Result = () => {
     try {
       const canvas = await createCanvas();
       if (!canvas) {
+        alert('!canvas');
+
         setIsSharing(false);
         return;
       }
 
       const blob = await generateBlob(canvas);
       if (!blob) {
+        alert('!blob');
+
         setIsSharing(false);
         return;
       }
