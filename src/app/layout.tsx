@@ -22,7 +22,7 @@ const pretendard = localFont({
 export const metadata: Metadata = {
   title: '우리의 이름 궁합은?',
   description: '재미로 보는 이름 궁합',
-  icons: '/assets/cat.png',
+  icons: '/assets/cat.webp',
 };
 
 export default function RootLayout({
