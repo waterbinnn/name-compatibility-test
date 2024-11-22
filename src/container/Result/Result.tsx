@@ -44,7 +44,6 @@ export const Result = () => {
   const [isSharing, setIsSharing] = useState<boolean>(false);
 
   const [isMobile, setIsMobile] = useState<boolean>(false);
-  const [canShare, setCanShare] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -257,12 +256,6 @@ export const Result = () => {
   const handleShare = async () => {
     setIsSharing(true);
 
-    const alertError = () => {
-      alert(
-        '이 브라우저에서는 기본 공유를 사용할 수 없습니다. 이미지 저장하기를 클릭 후 공유해주세요'
-      );
-    };
-
     try {
       const canvas = await createCanvas();
       if (!canvas) {
@@ -281,15 +274,12 @@ export const Result = () => {
       });
 
       if (!navigator.canShare || !navigator.canShare({ files: [file] })) {
-        setCanShare(false);
-        alertError();
-        return;
+        saveAs(blob, `${fileName}.png`);
+      } else {
+        await navigator.share({
+          files: [file],
+        });
       }
-
-      setCanShare(true);
-      await navigator.share({
-        files: [file],
-      });
     } catch (error) {
       console.error(error);
     }
