@@ -280,20 +280,21 @@ export const Result = () => {
       });
 
       if (!navigator.canShare || !navigator.canShare({ files: [file] })) {
-        const dataUrl = canvas.toDataURL('image/png');
-        const link = document.createElement('a');
-        link.href = dataUrl;
-        link.download = `${fileName}.png`;
-        link.setAttribute('target', '_blank');
-        link.click();
-        URL.revokeObjectURL(dataUrl);
-      } else {
-        await navigator.share({
-          files: [file],
-        });
+        // const dataUrl = canvas.toDataURL('image/png');
+        // const link = document.createElement('a');
+        // link.href = dataUrl;
+        // link.download = `${fileName}.png`;
+        // link.setAttribute('target', '_blank');
+        // link.click();
+        // URL.revokeObjectURL(dataUrl);
+        alert('!navigator share');
       }
+      await navigator.share({
+        files: [file],
+      });
     } catch (error) {
       console.error(error);
+      alert('catch error');
     }
     setIsSharing(false);
   };
