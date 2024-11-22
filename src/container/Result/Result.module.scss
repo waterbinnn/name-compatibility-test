@@ -110,13 +110,13 @@
 }
 
 .list-wrap {
-  margin: 4px -16px 0;
+  margin: 2px -16px 0;
 }
 
 .list {
   @extend %center;
   gap: 2px;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 
   .count {
     @extend %center;
