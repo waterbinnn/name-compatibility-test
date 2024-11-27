@@ -223,10 +223,6 @@ export const Result = () => {
         if (!blob) {
           console.error('Blob 생성 실패');
           resolve(null);
-          // errorToast();
-          toast('generatebloc', {
-            type: 'error',
-          });
         } else {
           resolve(blob);
         }
@@ -240,20 +236,14 @@ export const Result = () => {
     const canvas = await createCanvas();
     if (!canvas) {
       setIsDownloading(false);
-      // errorToast();
-      toast('canvas', {
-        type: 'error',
-      });
+      errorToast();
       return;
     }
 
     const blob = await generateBlob(canvas);
     if (!blob) {
       setIsDownloading(false);
-      // errorToast();
-      toast('blob', {
-        type: 'error',
-      });
+      errorToast();
       return;
     }
 
@@ -282,20 +272,14 @@ export const Result = () => {
 
     if (!canvas) {
       setIsSharing(false);
-      // errorToast();
-      toast('blob', {
-        type: 'error',
-      });
+      errorToast();
       return;
     }
 
     const blob = await generateBlob(canvas);
     if (!blob) {
       setIsSharing(false);
-      // errorToast();
-      toast('blob', {
-        type: 'error',
-      });
+      errorToast();
       return;
     }
 
@@ -316,9 +300,8 @@ export const Result = () => {
       });
     } catch (error) {
       console.error(error);
-      // errorToast();
-      toast('error', {
-        type: 'error',
+      toast('브라우저 지원이 안되네요,, \n 이미지 저장 후 공유 해주시면,,🙏', {
+        type: 'warning',
       });
     }
     setIsSharing(false);
