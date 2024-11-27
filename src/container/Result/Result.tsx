@@ -59,13 +59,13 @@ export const Result = () => {
     if (isEncoded(name1) || isEncoded(name2)) {
       const decodedUrl = `/result?name1=${decodeURIComponent(name1!)}&name2=${decodeURIComponent(name2!)}`;
       router.push(decodedUrl);
+    } else {
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 1500);
+
+      return () => clearTimeout(timer); // 타이머 클리어
     }
-
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-
-    return () => clearTimeout(timer); // 타이머 클리어
   }, [name1, name2, router]);
 
   useEffect(() => {
@@ -256,7 +256,7 @@ export const Result = () => {
 
   const handleCopyUrl = () => {
     window.navigator.clipboard.writeText(siteUrl);
-    toast('링크 저장 완료!', {
+    toast('링크 복사 완료!', {
       type: 'success',
     });
   };
@@ -267,10 +267,11 @@ export const Result = () => {
     const url = `${siteUrl}/result?name1=${name1}&name2=${name2}`;
 
     if (!navigator.share) {
-      window.navigator.clipboard.writeText(url);
-      toast('링크 저장 완료!', {
-        type: 'success',
-      });
+      if (window.navigator.clipboard) {
+        handleCopyUrl();
+      } else {
+        toast('공유하기 기능을 사용할 수 없어요 🥲');
+      }
       return;
     }
 
