@@ -13,6 +13,9 @@ import { coda, consonant, strokeCount, vowel } from '@/constant';
 import { useShallow } from 'zustand/shallow';
 import html2canvas from 'html2canvas';
 import KakaoAdFit from '@/lib/KakaoAdFit';
+import ShareIcon from '/public/assets/icon-link.svg';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const Result = () => {
   const router = useRouter();
@@ -44,7 +47,6 @@ export const Result = () => {
   const [isSharing, setIsSharing] = useState<boolean>(false);
 
   const [isMobile, setIsMobile] = useState<boolean>(false);
-  const [isCanShare, setIsCanShare] = useState<boolean>(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -204,6 +206,12 @@ export const Result = () => {
     }
   };
 
+  const errorToast = () => {
+    toast('문제가 발생했는데 \n 다시 시도해 주실 술..?', {
+      type: 'error',
+    });
+  };
+
   const rawFileName = `${name1}_${name2}의_이름궁합은_${countedLines[countedLines.length - 1].join('')}점`;
   const fileName = rawFileName.replace(/[\\/:*?"<>|]/g, '_');
 
@@ -222,27 +230,20 @@ export const Result = () => {
     });
   };
 
-  const blobToBase64 = (blob: Blob): Promise<string | ArrayBuffer | null> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result); // Base64로 변환된 데이터 반환
-      reader.onerror = reject;
-      reader.readAsDataURL(blob); // Blob 데이터를 Base64로 변환
-    });
-  };
-
   const handleDownload = async () => {
     setIsDownloading(true);
 
     const canvas = await createCanvas();
     if (!canvas) {
       setIsDownloading(false);
+      errorToast();
       return;
     }
 
     const blob = await generateBlob(canvas);
     if (!blob) {
       setIsDownloading(false);
+      errorToast();
       return;
     }
 
@@ -254,7 +255,7 @@ export const Result = () => {
       window.navigator.userAgent.toLowerCase()
     );
 
-    if (isKakaoBrowser) {
+    if (isKakaoBrowser || isInstaBrowser) {
       const dataUrl = canvas.toDataURL('image/png');
       const link = document.createElement('a');
       link.href = dataUrl;
@@ -262,17 +263,6 @@ export const Result = () => {
       link.setAttribute('target', '_blank');
       link.click();
       URL.revokeObjectURL(dataUrl);
-    } else if (isInstaBrowser) {
-      const base64Image = await blobToBase64(blob);
-      if (typeof base64Image === 'string') {
-        const link = document.createElement('a');
-        link.href = base64Image;
-        link.download = `${fileName}.png`;
-        link.click();
-        URL.revokeObjectURL(link.href); // 메모리 해제
-      } else {
-        throw new Error('Base64 변환 실패');
-      }
     } else {
       saveAs(blob, `${fileName}.png`);
     }
@@ -286,17 +276,15 @@ export const Result = () => {
       const canvas = await createCanvas();
 
       if (!canvas) {
-        alert('!canvas');
-
         setIsSharing(false);
+        errorToast();
         return;
       }
 
       const blob = await generateBlob(canvas);
       if (!blob) {
-        alert('!blob');
-
         setIsSharing(false);
+        errorToast();
         return;
       }
 
@@ -305,12 +293,14 @@ export const Result = () => {
       });
 
       if (!navigator.share || !navigator.canShare({ files: [file] })) {
-        setIsCanShare(false);
-        alert('브라우저 지원X, 이미지 저장 후 공유 해주세요');
+        toast(
+          '브라우저 지원이 안되네요,, \n 이미지 저장 후 공유 해주시면,,🙏',
+          {
+            type: 'warning',
+          }
+        );
         return;
       }
-
-      setIsCanShare(true);
 
       await navigator.share({
         files: [file],
@@ -319,6 +309,14 @@ export const Result = () => {
       console.error(error);
     }
     setIsSharing(false);
+  };
+
+  const handleCopyUrl = () => {
+    const siteUrl = 'https://name-compatibility-test.vercel.app/';
+    window.navigator.clipboard.writeText(siteUrl);
+    toast('웹사이트 링크 저장 완료!', {
+      type: 'success',
+    });
   };
 
   return (
@@ -387,6 +385,14 @@ export const Result = () => {
 
           <div className={cx('button-wrap')} id='ignore-download'>
             <Button
+              size='icon'
+              variant='icon'
+              className={cx('share-icon')}
+              onClick={handleCopyUrl}
+              icon={<ShareIcon />}
+              rounded
+            />
+            <Button
               size='lg'
               fullWidth
               className={cx('button')}
@@ -396,7 +402,7 @@ export const Result = () => {
               이미지 저장하기
             </Button>
 
-            {isMobile && isCanShare && (
+            {isMobile && (
               <Button
                 size='lg'
                 fullWidth
@@ -468,6 +474,23 @@ export const Result = () => {
           </Button>
         </div>
       )}
+
+      <ToastContainer
+        position='top-right'
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable={false}
+        pauseOnHover={false}
+        theme='colored'
+        style={{
+          whiteSpace: 'pre-wrap',
+          fontWeight: 600,
+        }}
+      />
     </>
   );
 };

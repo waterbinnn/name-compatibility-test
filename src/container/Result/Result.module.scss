@@ -141,7 +141,7 @@
   border-radius: 12px;
 
   &-wrap {
-    margin-top: 58px;
+    margin-top: 10px;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -154,6 +154,13 @@
   &.share {
     background-color: $green;
   }
+}
+
+.share-icon {
+  background-color: $black;
+  transform: rotate(45deg);
+  align-self: flex-end;
+  margin-bottom: 20px;
 }
 
 .error-wrap {
