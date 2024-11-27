@@ -44,9 +44,23 @@ export const Result = () => {
 
   useEffect(() => {
     if (!name1 || !name2) {
-      router.push('/');
+      handleGoToMain();
       return;
     }
+
+    const isEncoded = (str: string) => {
+      try {
+        return str !== decodeURIComponent(str); // 디코딩 후 값이 다르면 인코딩된 상태
+      } catch (e) {
+        return false; // decodeURIComponent가 실패하면 인코딩된 상태가 아님
+      }
+    };
+
+    if (isEncoded(name1) || isEncoded(name2)) {
+      const decodedUrl = `/result?name1=${decodeURIComponent(name1!)}&name2=${decodeURIComponent(name2!)}`;
+      router.push(decodedUrl);
+    }
+
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1500);
@@ -247,49 +261,23 @@ export const Result = () => {
     });
   };
 
-  const encodeName = (name: string) => {
-    const encoder = new TextEncoder(); // TextEncoder는 기본 UTF-8 인코딩
-    const encodedBytes = encoder.encode(name); // 바이트 배열 생성
-    return Array.from(encodedBytes)
-      .map((byte) => `%${byte.toString(16).toUpperCase()}`) // URL 안전한 형태로 변환
-      .join('');
-  };
-
-  const decodeName = (encodedString: string) => {
-    const byteArray = encodedString
-      .split('%')
-      .filter((byte) => byte) // 빈 문자열 제거
-      .map((hex) => parseInt(hex, 16)); // 16진수로 변환
-
-    const decoder = new TextDecoder('utf-8'); // UTF-8로 디코딩
-    return decoder.decode(new Uint8Array(byteArray)); // 문자열로 변환
-  };
-
   const handleShare = async () => {
     setIsSharing(true);
 
-    const resultUrl = `${siteUrl}/result?name1=${name1}&name2=${name2}`;
+    const url = `${siteUrl}/result?name1=${name1}&name2=${name2}`;
 
     if (!navigator.share) {
-      window.navigator.clipboard.writeText(resultUrl);
+      window.navigator.clipboard.writeText(url);
       toast('링크 저장 완료!', {
         type: 'success',
       });
       return;
     }
 
-    const encodedName1 = encodeName(name1!);
-    const decodedName1 = decodeName(encodedName1);
-
-    const encodedName2 = encodeName(name!);
-    const decodedName2 = decodeName(encodedName2);
-
-    console.log(encodedName1, decodedName1);
-
     try {
       await navigator.share({
         title: fileName,
-        url: `${siteUrl}/result?name1=${decodedName1}&name2=${decodedName2}`,
+        url,
       });
     } catch (error) {
       console.error(error);
