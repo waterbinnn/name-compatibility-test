@@ -4,13 +4,12 @@ import { useStyle } from '@/hooks';
 import styles from './Result.module.scss';
 
 import { Button } from '@waterbin/ui-kit';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState, useRef, useTransition } from 'react';
 import Image from 'next/image';
 import saveAs from 'file-saver';
-import { useNameStore } from '@/store';
+
 import { coda, consonant, strokeCount, vowel } from '@/constant';
-import { useShallow } from 'zustand/shallow';
 import html2canvas from 'html2canvas';
 import KakaoAdFit from '@/lib/KakaoAdFit';
 import ShareIcon from '/public/assets/icon-link.svg';
@@ -19,19 +18,12 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export const Result = () => {
   const router = useRouter();
-  const { styled: cx } = useStyle(styles);
+  const searchParams = useSearchParams();
 
-  const { name1, name2, setName1, setName2, isWatched, setIsWatched } =
-    useNameStore(
-      useShallow((state) => ({
-        name1: state.name1,
-        name2: state.name2,
-        isWatched: state.isWatched,
-        setName1: state.setName1,
-        setName2: state.setName2,
-        setIsWatched: state.setIsWatched,
-      }))
-    );
+  const name1 = searchParams.get('name1');
+  const name2 = searchParams.get('name2');
+
+  const { styled: cx } = useStyle(styles);
 
   const resultRef = useRef<HTMLDivElement>(null);
   const contentsRef = useRef<HTMLDivElement>(null);
@@ -46,40 +38,21 @@ export const Result = () => {
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const [isSharing, setIsSharing] = useState<boolean>(false);
 
-  const [isMobile, setIsMobile] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const mobile = /Mobi|Android/i.test(window.navigator.userAgent);
-
-      setIsMobile(mobile);
-    }
-  }, []);
+  const handleGoToMain = () => {
+    router.push('/');
+  };
 
   useEffect(() => {
     if (!name1 || !name2) {
-      setIsWatched(false);
       router.push('/');
       return;
     }
-
-    if (isWatched) {
+    const timer = setTimeout(() => {
       setIsLoading(false);
-    } else {
-      const timer = setTimeout(() => {
-        setIsLoading(false);
-        setIsWatched(true);
-      }, 1500);
+    }, 1500);
 
-      return () => clearTimeout(timer); // 타이머 클리어
-    }
-  }, [isWatched, name1, name2, router, setIsWatched]);
-
-  const handleGoToMain = useCallback(() => {
-    router.push('/');
-    setName1('');
-    setName2('');
-  }, [router, setName1, setName2]);
+    return () => clearTimeout(timer); // 타이머 클리어
+  }, [name1, name2, router]);
 
   useEffect(() => {
     function mixStrings(name1: string, name2: string) {
@@ -265,54 +238,37 @@ export const Result = () => {
     setIsDownloading(false);
   };
 
+  const siteUrl = 'https://name-compatibility-test.vercel.app';
+
+  const handleCopyUrl = () => {
+    window.navigator.clipboard.writeText(siteUrl);
+    toast('링크 저장 완료!', {
+      type: 'success',
+    });
+  };
+
   const handleShare = async () => {
     setIsSharing(true);
 
-    const canvas = await createCanvas();
+    const resultUrl = `${siteUrl}/result?name1=${name1}/name2=${name2}`;
 
-    if (!canvas) {
-      setIsSharing(false);
-      errorToast();
-      return;
-    }
-
-    const blob = await generateBlob(canvas);
-    if (!blob) {
-      setIsSharing(false);
-      errorToast();
-      return;
-    }
-
-    const file = new File([blob], `${fileName}.png`, {
-      type: 'image/png',
-    });
-
-    if (!navigator.share || !navigator.canShare({ files: [file] })) {
-      toast('브라우저 지원이 안되네요,, \n 이미지 저장 후 공유 해주시면,,🙏', {
-        type: 'warning',
+    if (!navigator.share) {
+      window.navigator.clipboard.writeText(resultUrl);
+      toast('링크 저장 완료!', {
+        type: 'success',
       });
       return;
     }
 
     try {
       await navigator.share({
-        files: [file],
+        title: fileName,
+        url: resultUrl,
       });
     } catch (error) {
       console.error(error);
-      toast('브라우저 지원이 안되네요,, \n 이미지 저장 후 공유 해주시면,,🙏', {
-        type: 'warning',
-      });
     }
     setIsSharing(false);
-  };
-
-  const handleCopyUrl = () => {
-    const siteUrl = 'https://name-compatibility-test.vercel.app/';
-    window.navigator.clipboard.writeText(siteUrl);
-    toast('웹사이트 링크 저장 완료!', {
-      type: 'success',
-    });
   };
 
   return (
@@ -398,17 +354,15 @@ export const Result = () => {
               이미지 저장하기
             </Button>
 
-            {isMobile && (
-              <Button
-                size='lg'
-                fullWidth
-                className={cx('button', 'share')}
-                onClick={handleShare}
-                loading={isSharing}
-              >
-                결과 공유하기
-              </Button>
-            )}
+            <Button
+              size='lg'
+              fullWidth
+              className={cx('button', 'share')}
+              onClick={handleShare}
+              loading={isSharing}
+            >
+              결과 공유하기
+            </Button>
 
             <Button
               size='lg'
@@ -427,7 +381,7 @@ export const Result = () => {
       )}
 
       {/* 로딩중 */}
-      {!isError && !isWatched && isLoading && (
+      {!isError && isLoading && (
         <div className={cx('gif-wrap')}>
           <strong className={cx('loading-text')}>궁합 계산 중 ..... </strong>
           <Image

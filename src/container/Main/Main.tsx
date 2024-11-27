@@ -13,30 +13,20 @@ import { useRouter } from 'next/navigation';
 
 import styles from './Main.module.scss';
 import { koreanRegex } from '@/constant';
-import { useNameStore } from '@/store';
-import { useShallow } from 'zustand/shallow';
 
 import KakaoAdFit from '@/lib/KakaoAdFit';
 
 export const Main = () => {
   const router = useRouter();
   const { styled: cx } = useStyle(styles);
-  const { name1, name2, setName1, setName2, setIsWatched } = useNameStore(
-    useShallow((state) => ({
-      name1: state.name1,
-      name2: state.name2,
-      setName1: state.setName1,
-      setName2: state.setName2,
-      setIsWatched: state.setIsWatched,
-    }))
-  );
+  const [name1, setName1] = useState<string>('');
+  const [name2, setName2] = useState<string>('');
 
   const [isValid, setIsValid] = useState<boolean>(false);
 
   useEffect(() => {
     setName1('');
     setName2('');
-    setIsWatched(false);
   }, []);
 
   useEffect(() => {
@@ -54,6 +44,10 @@ export const Main = () => {
       setIsValid(false);
     }
   }, [name1, name2]);
+
+  const handleSubmit = () => {
+    router.push(`/result?name1=${name1}&name2=${name2}`);
+  };
 
   return (
     <>
@@ -97,7 +91,7 @@ export const Main = () => {
 
         <Button
           className={cx('button-submit')}
-          onClick={() => router.push('/result')}
+          onClick={handleSubmit}
           variant='iconText'
           size='lg'
           disabled={!isValid}
