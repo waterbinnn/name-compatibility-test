@@ -223,6 +223,7 @@ export const Result = () => {
         if (!blob) {
           console.error('Blob 생성 실패');
           resolve(null);
+          errorToast();
         } else {
           resolve(blob);
         }
@@ -251,11 +252,7 @@ export const Result = () => {
       window.navigator.userAgent.toLowerCase()
     );
 
-    const isInstaBrowser = /instagram/i.test(
-      window.navigator.userAgent.toLowerCase()
-    );
-
-    if (isKakaoBrowser || isInstaBrowser) {
+    if (isKakaoBrowser) {
       const dataUrl = canvas.toDataURL('image/png');
       const link = document.createElement('a');
       link.href = dataUrl;
@@ -272,41 +269,39 @@ export const Result = () => {
   const handleShare = async () => {
     setIsSharing(true);
 
-    try {
-      const canvas = await createCanvas();
+    const canvas = await createCanvas();
 
-      if (!canvas) {
-        setIsSharing(false);
-        errorToast();
-        return;
-      }
+    if (!canvas) {
+      setIsSharing(false);
+      errorToast();
+      return;
+    }
 
-      const blob = await generateBlob(canvas);
-      if (!blob) {
-        setIsSharing(false);
-        errorToast();
-        return;
-      }
+    const blob = await generateBlob(canvas);
+    if (!blob) {
+      setIsSharing(false);
+      errorToast();
+      return;
+    }
 
-      const file = new File([blob], `${fileName}.png`, {
-        type: 'image/png',
+    const file = new File([blob], `${fileName}.png`, {
+      type: 'image/png',
+    });
+
+    if (!navigator.share || !navigator.canShare({ files: [file] })) {
+      toast('브라우저 지원이 안되네요,, \n 이미지 저장 후 공유 해주시면,,🙏', {
+        type: 'warning',
       });
+      return;
+    }
 
-      if (!navigator.share || !navigator.canShare({ files: [file] })) {
-        toast(
-          '브라우저 지원이 안되네요,, \n 이미지 저장 후 공유 해주시면,,🙏',
-          {
-            type: 'warning',
-          }
-        );
-        return;
-      }
-
+    try {
       await navigator.share({
         files: [file],
       });
     } catch (error) {
       console.error(error);
+      errorToast();
     }
     setIsSharing(false);
   };
