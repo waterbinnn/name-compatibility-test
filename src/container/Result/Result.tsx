@@ -207,7 +207,7 @@ export const Result = () => {
   };
 
   const errorToast = () => {
-    toast('문제가 발생했는데 \n 다시 시도해 주실 술..?', {
+    toast('문제가 발생했는데 다시 시도해 주실 술..?', {
       type: 'error',
     });
   };
@@ -223,7 +223,10 @@ export const Result = () => {
         if (!blob) {
           console.error('Blob 생성 실패');
           resolve(null);
-          errorToast();
+          // errorToast();
+          toast('generatebloc', {
+            type: 'error',
+          });
         } else {
           resolve(blob);
         }
@@ -237,14 +240,20 @@ export const Result = () => {
     const canvas = await createCanvas();
     if (!canvas) {
       setIsDownloading(false);
-      errorToast();
+      // errorToast();
+      toast('canvas', {
+        type: 'error',
+      });
       return;
     }
 
     const blob = await generateBlob(canvas);
     if (!blob) {
       setIsDownloading(false);
-      errorToast();
+      // errorToast();
+      toast('blob', {
+        type: 'error',
+      });
       return;
     }
 
@@ -273,14 +282,20 @@ export const Result = () => {
 
     if (!canvas) {
       setIsSharing(false);
-      errorToast();
+      // errorToast();
+      toast('blob', {
+        type: 'error',
+      });
       return;
     }
 
     const blob = await generateBlob(canvas);
     if (!blob) {
       setIsSharing(false);
-      errorToast();
+      // errorToast();
+      toast('blob', {
+        type: 'error',
+      });
       return;
     }
 
@@ -301,7 +316,10 @@ export const Result = () => {
       });
     } catch (error) {
       console.error(error);
-      errorToast();
+      // errorToast();
+      toast('error', {
+        type: 'error',
+      });
     }
     setIsSharing(false);
   };
