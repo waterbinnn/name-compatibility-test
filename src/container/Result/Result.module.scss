@@ -63,6 +63,7 @@
     @extend %center;
     gap: 10px;
     flex-wrap: wrap;
+    margin-bottom: 8px;
   }
 
   &-text-point {
@@ -76,7 +77,7 @@
 .image-cats {
   position: absolute;
   right: -16px;
-  top: 51px;
+  top: 40px;
   z-index: 1;
   display: inline-block;
   width: 204px;
