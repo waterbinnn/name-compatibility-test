@@ -5,7 +5,7 @@ import styles from './Result.module.scss';
 
 import { Button } from '@waterbin/ui-kit';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useState, useRef, useTransition } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import saveAs from 'file-saver';
 
