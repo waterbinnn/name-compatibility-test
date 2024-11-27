@@ -6,6 +6,7 @@ export default function Head() {
         rel='canonical'
         href='https://name-compatibility-test.vercel.app/'
       />
+      <meta charSet='EUC-KR' />
       <meta name='viewport' content='initial-scale=1.0, width=device-width' />
       <meta property='og:type' content='website' />
       <meta property='og:title' content='우리의 이름 궁합은?' />
