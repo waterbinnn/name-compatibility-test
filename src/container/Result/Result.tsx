@@ -170,13 +170,13 @@ export const Result = () => {
           const boxText = el.querySelectorAll('#box');
 
           if (h2Element instanceof HTMLElement) {
-            h2Element.style.paddingBottom = '20px';
-            h2Element.style.marginTop = '-20px';
+            h2Element.style.paddingBottom = '10px';
+            h2Element.style.marginTop = '-10px';
           }
 
           const boxStyle = (element: Element) => {
             if (element instanceof HTMLElement) {
-              element.style.paddingBottom = '30px';
+              element.style.paddingBottom = '20px';
               element.style.display = 'inline-block';
             }
           };
