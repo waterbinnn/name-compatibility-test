@@ -3,7 +3,6 @@
 import { useStyle } from '@/hooks';
 import styles from './Result.module.scss';
 
-import { Button } from '@waterbin/ui-kit';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
@@ -15,6 +14,7 @@ import KakaoAdFit from '@/lib/KakaoAdFit';
 import ShareIcon from '/public/assets/icon-link.svg';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Button } from '@waterbin/ui-kit';
 
 export const Result = () => {
   const router = useRouter();
@@ -305,7 +305,7 @@ export const Result = () => {
               <h2 className={cx('header-text-wrap')} id='header'>
                 <div className={cx('header-name-wrap')}>
                   <strong className={cx('header-text')}>{name1}</strong>
-                  <span className={cx('header-text')}>🩵</span>
+                  <span className={cx('header-text')}>💙</span>
                   <strong className={cx('header-text')}>{name2}</strong>
                 </div>
                 <p className={cx('header-text-sm')}>우리의 이름 궁합은</p>
