@@ -45,10 +45,7 @@ module.exports = {
     return [
       {
         source: '/:path*',
-        headers: [
-          { key: 'Access-Control-Allow-Origin', value: '*' },
-          { key: 'Cache-Control', value: 'no-store, must-revalidate' },
-        ],
+        headers: [{ key: 'Access-Control-Allow-Origin', value: '*' }],
       },
     ];
   },
