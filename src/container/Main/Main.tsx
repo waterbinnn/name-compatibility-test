@@ -6,7 +6,8 @@ import Image from 'next/image';
 
 import { useEffect, useState } from 'react';
 
-import Arrow from '/public/assets/icon_arrow_s.svg';
+import Favorite from '/public/assets/icon-favorite.svg';
+import BlueHeart from '/public/assets/blue_heart.svg';
 
 import { useRouter } from 'next/navigation';
 
@@ -70,20 +71,28 @@ export const Main = () => {
 
         <Popover classNames={cx('info-popover')}>
           <PopoverHandler>
-            <Button size='sm' color='blue'>
-              💙 안내사항 💙
+            <Button
+              size='sm'
+              color='blue'
+              className={cx('info-popover-button')}
+            >
+              <BlueHeart className={cx('heart-icon')} />
+              안내사항
+              <BlueHeart className={cx('heart-icon')} />
             </Button>
           </PopoverHandler>
           <PopoverContent placement='bottom-end'>
             <ul className={cx('info-wrap')}>
               <li className={cx('info-list')}>
-                💙 궁합 볼 사람이 없다고요?
+                <BlueHeart className={cx('heart-icon')} /> 궁합 볼 사람이
+                없다고요?
                 <p className={cx('info-content')}>
                   연예인이랑 하시는 건 어떤지..
                 </p>
               </li>
               <li className={cx('info-list')}>
-                💙 버그를 발견하셨다고요?
+                <BlueHeart className={cx('heart-icon')} /> 버그를
+                발견하셨다고요?
                 <p className={cx('info-content')}>
                   묻어 ....... 가 아니고
                   <br />
@@ -131,7 +140,9 @@ export const Main = () => {
           disabled={!isValid}
           color='blue'
         >
-          ♥︎ ~ 궁합 보기 ~ ♥︎
+          <Favorite />
+          ~ 궁합 보기 ~
+          <Favorite />
         </Button>
 
         <span className={cx('copyright')}>

@@ -68,10 +68,14 @@
   margin-top: 10px;
   display: flex;
   align-self: flex-end;
-  width: 88px;
+  margin-right: 10px;
 }
 
 .info {
+  &-popover-button {
+    gap: 1px;
+  }
+
   &-wrap {
     position: relative;
     background-color: rgba($white, 0.78);
@@ -97,4 +101,8 @@
     margin-left: 14px;
     padding-top: 3px;
   }
+}
+
+.heart-icon {
+  display: inline-block;
 }
