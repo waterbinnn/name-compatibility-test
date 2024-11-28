@@ -43,7 +43,6 @@
   padding: 8px 10px 8px 14px;
   gap: 4px;
   margin-top: -20px;
-  margin-bottom: 50px;
 }
 
 .copyright {
@@ -60,4 +59,40 @@
 .ad-wrap {
   margin-top: -20px;
   margin-bottom: 10px;
+}
+
+.button-wrap {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info {
+  &-wrap {
+    width: 100%;
+    max-width: 480px;
+    background-color: rgba($white, 0.6);
+    padding: 10px;
+    border: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: #141414;
+    justify-content: flex-end;
+  }
+
+  &-list {
+    font-size: 11px;
+    white-space: wrap;
+    word-break: break-all;
+    font-weight: 500;
+    width: 180px;
+  }
+
+  &-content {
+    font-weight: 400;
+    margin-left: 14px;
+    padding-top: 3px;
+  }
 }
