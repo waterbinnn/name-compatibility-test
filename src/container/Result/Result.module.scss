@@ -45,6 +45,7 @@
       display: inline-block;
       color: $white;
       word-break: auto-phrase;
+      letter-spacing: 0.02em;
     }
 
     &.error {
@@ -69,7 +70,7 @@
   &-text-point {
     @extend %text-animation;
     font-size: $h2;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
     font-weight: 500;
   }
 }
@@ -140,6 +141,7 @@
   font-size: $button-font-size;
   padding: 14px 0;
   border-radius: 12px;
+  font-weight: 400;
 
   &-wrap {
     margin-top: 10px;

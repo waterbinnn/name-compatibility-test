@@ -38,11 +38,12 @@
 
 .button-submit {
   display: flex;
-  align-self: flex-end;
-  flex-direction: row-reverse;
-  padding: 8px 10px 8px 14px;
+  align-items: center;
+  justify-content: center;
   gap: 4px;
-  margin-top: -20px;
+  width: 60%;
+  margin: 0 auto;
+  background-color: #53f3ff;
 }
 
 .copyright {
@@ -61,18 +62,16 @@
   margin-bottom: 10px;
 }
 
-.button-wrap {
-  display: flex;
-  flex-direction: row-reverse;
-  justify-content: space-between;
-  align-items: center;
+.info-popover {
+  margin-top: 10px;
 }
 
 .info {
   &-wrap {
+    position: relative;
     width: 100%;
     max-width: 480px;
-    background-color: rgba($white, 0.6);
+    background-color: rgba($white, 0.78);
     padding: 10px;
     border: 2px;
     display: flex;

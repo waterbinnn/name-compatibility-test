@@ -360,7 +360,6 @@ export const Result = () => {
               rounded
             />
             <Button
-              size='lg'
               fullWidth
               className={cx('button')}
               onClick={handleDownload}
@@ -370,7 +369,6 @@ export const Result = () => {
             </Button>
 
             <Button
-              size='lg'
               fullWidth
               className={cx('button', 'share')}
               onClick={handleShare}
@@ -380,7 +378,6 @@ export const Result = () => {
             </Button>
 
             <Button
-              size='lg'
               fullWidth
               className={cx('button', 'restart')}
               onClick={handleGoToMain}
