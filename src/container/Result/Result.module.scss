@@ -37,7 +37,7 @@
     color: $white;
     display: inline-block;
     text-align: center;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.02em;
 
     &-sm {
       font-size: 30px;
@@ -45,7 +45,6 @@
       display: inline-block;
       color: $white;
       word-break: auto-phrase;
-      letter-spacing: 0.02em;
     }
 
     &.error {
@@ -70,7 +69,7 @@
   &-text-point {
     @extend %text-animation;
     font-size: $h2;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
     font-weight: 500;
   }
 }
