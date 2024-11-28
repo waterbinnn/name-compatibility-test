@@ -1962,10 +1962,10 @@
   resolved "https://registry.yarnpkg.com/@vue/shared/-/shared-3.4.19.tgz#28105147811bcf1e6612bf1c9ab0c6d91ada019c"
   integrity sha512-/KliRRHMF6LoiThEy+4c1Z4KB/gbPrGjWwJR+crg2otgrf/egKzRaCPvJ51S5oetgsgXLfc4Rm5ZgrKHZrtMSw==
 
-"@waterbin/ui-kit@^0.0.4-4":
-  version "0.0.4-4"
-  resolved "https://registry.yarnpkg.com/@waterbin/ui-kit/-/ui-kit-0.0.4-4.tgz#ffc0e9efc296225b9ac778be999372423c75e9c4"
-  integrity sha512-LU9qqxZnucbbJGIR3lXIzIqUDtw0QDZewpD/ooaZudGNL5KWdcRiJ94T/yyrD+Fr868Kgk3zYeJuYr+I42IcFQ==
+"@waterbin/ui-kit@^0.0.4-5":
+  version "0.0.4-5"
+  resolved "https://registry.yarnpkg.com/@waterbin/ui-kit/-/ui-kit-0.0.4-5.tgz#033ebd51e8f3d6c69dd9f0f97c3a9a83a073bd98"
+  integrity sha512-GyPM+kw7tD3FEMa6WzecQqSg6r+xW391/qCZ2OsreNTymJWLccloucgZCyljuHNcgCOyx2/25RsOCIl/fsIa1Q==
   dependencies:
     "@pandacss/dev" "^0.45.1"
     "@rollup/plugin-node-resolve" "^15.2.3"
