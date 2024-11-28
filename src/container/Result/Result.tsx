@@ -163,16 +163,21 @@ export const Result = () => {
       const canvas = await html2canvas(contentImage, {
         useCORS: true,
         scale: 2,
-        height: Math.ceil(height + 50),
+        height: Math.ceil(height + 100),
         ignoreElements: (element) => element.id === 'ignore-download',
         onclone: (el) => {
           const countText = el.querySelectorAll('#count');
           const h2Element = el.querySelector('#header');
+          const h2Image = el.querySelector('#header-img');
           const boxText = el.querySelectorAll('#box');
 
           if (h2Element instanceof HTMLElement) {
             h2Element.style.paddingBottom = '10px';
             h2Element.style.marginTop = '-10px';
+          }
+
+          if (h2Image instanceof HTMLElement) {
+            h2Image.style.paddingTop = '28px';
           }
 
           const boxStyle = (element: Element) => {
@@ -306,9 +311,15 @@ export const Result = () => {
               <h2 className={cx('header-text-wrap')} id='header'>
                 <div className={cx('header-name-wrap')}>
                   <strong className={cx('header-text')}>{name1}</strong>
-                  <span className={cx('header-text')}>
-                    <HeartIcon />
-                  </span>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={'/assets/blue_heart_lg.svg'}
+                    alt='heart'
+                    aria-hidden
+                    loading='eager'
+                    id='header-img'
+                  />
+
                   <strong className={cx('header-text')}>{name2}</strong>
                 </div>
                 <p className={cx('header-text-sm')}>우리의 이름 궁합은</p>
