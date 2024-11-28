@@ -74,7 +74,7 @@ export const Main = () => {
               💙 안내사항 💙
             </Button>
           </PopoverHandler>
-          <PopoverContent placement='right'>
+          <PopoverContent placement='bottom-end'>
             <ul className={cx('info-wrap')}>
               <li className={cx('info-list')}>
                 💙 궁합 볼 사람이 없다고요?
