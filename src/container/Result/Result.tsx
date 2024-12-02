@@ -278,6 +278,7 @@ export const Result = () => {
       } else {
         toast('공유하기 기능을 사용할 수 없어요 🥲');
       }
+      setIsSharing(false);
       return;
     }
 
