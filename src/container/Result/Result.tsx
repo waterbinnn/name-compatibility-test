@@ -12,7 +12,6 @@ import { coda, consonant, strokeCount, vowel } from '@/constant';
 import html2canvas from 'html2canvas';
 import KakaoAdFit from '@/lib/KakaoAdFit';
 import ShareIcon from '/public/assets/icon-link.svg';
-import HeartIcon from '/public/assets/blue_heart_lg.svg';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Button } from '@waterbin/ui-kit';
@@ -260,8 +259,8 @@ export const Result = () => {
 
   const siteUrl = 'https://name-compatibility-test.vercel.app';
 
-  const handleCopyUrl = () => {
-    window.navigator.clipboard.writeText(siteUrl);
+  const handleCopyUrl = (url?: string) => {
+    window.navigator.clipboard.writeText(url || siteUrl);
     toast('링크 복사 완료!', {
       type: 'success',
     });
@@ -274,7 +273,7 @@ export const Result = () => {
 
     if (!navigator.share) {
       if (window.navigator.clipboard) {
-        handleCopyUrl();
+        handleCopyUrl(url);
       } else {
         toast('공유하기 기능을 사용할 수 없어요 🥲');
       }
@@ -370,7 +369,7 @@ export const Result = () => {
               size='icon'
               variant='icon'
               className={cx('share-icon')}
-              onClick={handleCopyUrl}
+              onClick={() => handleCopyUrl()}
               icon={<ShareIcon />}
               rounded
             />
