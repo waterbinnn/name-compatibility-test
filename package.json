@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@svgr/webpack": "^8.1.0",
-    "@waterbin/ui-kit": "^0.0.4-5",
+    "@waterbin/ui-kit": "^0.0.4-beta",
     "classnames": "^2.5.1",
     "file-saver": "^2.0.5",
     "html2canvas": "^1.4.1",
